@@ -235,7 +235,7 @@
                         device.send(out.buffer);
                     }
                 }
-                console.log("notifyConnection is " + notifyConnection);
+                console.log("notifyConnection is ", notifyConnection);
                 notifyConnection = true;
                 setTimeout(function () {
                     notifyConnection = false;

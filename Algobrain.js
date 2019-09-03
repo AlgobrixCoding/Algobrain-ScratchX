@@ -235,6 +235,7 @@
                         device.send(out.buffer);
                     }
                 }
+                console.log("notifyConnection is " + notifyConnection);
                 notifyConnection = true;
                 setTimeout(function () {
                     notifyConnection = false;
@@ -642,6 +643,9 @@
     ext._deviceRemoved = function (dev) {
         console.log('Device removed');
         // Not currently implemented with serial devices
+        if(device != dev) return;
+        if(poller) poller = clearInterval(poller);
+        device = null;
     };
 
     var potentialDevices = [];
@@ -660,7 +664,7 @@
 
         device.open({
             stopBits: 0,
-            bitRate: 57600,
+            bitRate: 9600,
             ctsFlowControl: 0
         });
         console.log('Attempting connection with ' + device.id);

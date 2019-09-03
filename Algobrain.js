@@ -1258,10 +1258,10 @@
     var descriptor = {
         blocks: blocks[lang],
         menus: menus[lang],
-        url: 'http://algobrix.github.io/algobot_scratch_extension/algobot_extension.js'
+        url: 'https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js'
     };
 
-    ScratchExtensions.register('Algobot', descriptor, ext, {
+    ScratchExtensions.register('Algobrain', descriptor, ext, {
         type: 'serial'
     });
 

@@ -94,7 +94,9 @@
         Motor_C_Dir_Pin = 6,
         Motor_Sleep_Pin = 13,
         Led_A_Pin = 19,
-        Led_B_Pin = 18;
+        Led_B_Pin = 18,
+        PlayLedPin = 4;
+
         // Sensor_A_Pin = A3,
         // Sensor_B_Pin = A2;
 
@@ -390,6 +392,9 @@
     }
 
     function setupPeripherals() {
+        // Need some real hardware indication to know when the device has been connected. (Debug and UI)
+        pinMode(PlayLedPin, OUTPUT);
+        digitalWrite(PlayLedPin, HIGH);
         setupSensors();
         setupMotors();
         setupLeds();

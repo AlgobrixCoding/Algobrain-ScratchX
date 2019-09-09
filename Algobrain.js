@@ -49,7 +49,7 @@
     var LOW = 0,
         HIGH = 1;
 
-    var MAX_DATA_BYTES = 8192;
+    var MAX_DATA_BYTES = 4096;
     var MAX_PINS = 128;
 
     var parsingSysex = false,
@@ -605,7 +605,6 @@
         if (!device) return;
 
         device.open({
-            bufferSize: 8192, // Maximum buffer size
             bitRate: 57600, // This is the baudrate Firmate is using, dont change.
             stopBits: 0,
             ctsFlowControl: 0

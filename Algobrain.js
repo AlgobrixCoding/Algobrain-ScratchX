@@ -49,7 +49,7 @@
     var LOW = 0,
         HIGH = 1;
 
-    var MAX_DATA_BYTES = 4096;
+    var MAX_DATA_BYTES = 8192;
     var MAX_PINS = 128;
 
     var parsingSysex = false,
@@ -85,7 +85,7 @@
     var hwList = new HWList();
 
     // Algobrain Related :
-        // Pinout
+    // Pinout
     var Motor_A_PWM_Pin = 9,
         Motor_A_Dir_Pin = 10,
         Motor_B_PWM_Pin = 3,
@@ -97,30 +97,6 @@
         Led_B_Pin = 18,
         Sensor_A_Pin = A3,
         Sensor_B_Pin = A2;
-    
-    function register_neopixel(pin, count) {
-        var msg = new Uint8Array([
-            START_SYSEX,
-            NEOPIXEL_REGISTER,
-            pin,
-            count,
-            END_SYSEX
-        ]);
-        device.send(msg.buffer);
-    }
-
-    function neopixel(index, red, green, blue) {
-        var msg = new Uint8Array([
-            START_SYSEX,
-            NEOPIXEL,
-            index,
-            red,
-            green,
-            blue,
-            END_SYSEX
-        ]);
-        device.send(msg.buffer);
-    }
 
     function HWList() {
         this.devices = [];
@@ -264,7 +240,6 @@
                 }
                 pinging = false;
                 pingCount = 0;
-                setupPeripherals();
                 break;
         }
     }
@@ -419,37 +394,59 @@
     }
 
     function setMotorSpeed(motorId, pwm) {
-        switch (motorId)
-        {
-        case 'Motor A':
-            analogWrite(Motor_A_PWM_Pin, pwm);
-            break;
-        case 'Motor B':
-            analogWrite(Motor_B_PWM_Pin, pwm);
-            break;
-        case 'Motor C':
-            analogWrite(Motor_C_PWM_Pin, pwm);
-            break;
+        switch (motorId) {
+            case 'Motor A':
+                analogWrite(Motor_A_PWM_Pin, pwm);
+                break;
+            case 'Motor B':
+                analogWrite(Motor_B_PWM_Pin, pwm);
+                break;
+            case 'Motor C':
+                analogWrite(Motor_C_PWM_Pin, pwm);
+                break;
         }
     }
 
     function setMotorDir(motorId, _dir) {
         var dir = 0; // Default is Clockwise
-        if(_dir != 'Clockwise') {
+        if (_dir != 'Clockwise') {
             dir = 1; // Set as Counter Clockwise
         }
-        switch (motorId)
-        {
-        case 'Motor A':
-            digitalWrite(Motor_A_Dir_Pin, dir);
-            break;
-        case 'Motor B':
-            digitalWrite(Motor_B_Dir_Pin, dir);
-            break;
-        case 'Motor C':
-            digitalWrite(Motor_C_Dir_Pin, dir);
-            break;
+        switch (motorId) {
+            case 'Motor A':
+                digitalWrite(Motor_A_Dir_Pin, dir);
+                break;
+            case 'Motor B':
+                digitalWrite(Motor_B_Dir_Pin, dir);
+                break;
+            case 'Motor C':
+                digitalWrite(Motor_C_Dir_Pin, dir);
+                break;
         }
+    }
+
+    function register_neopixel(pin, count) {
+        var msg = new Uint8Array([
+            START_SYSEX,
+            NEOPIXEL_REGISTER,
+            pin,
+            count,
+            END_SYSEX
+        ]);
+        device.send(msg.buffer);
+    }
+
+    function neopixel(index, red, green, blue) {
+        var msg = new Uint8Array([
+            START_SYSEX,
+            NEOPIXEL,
+            index,
+            red,
+            green,
+            blue,
+            END_SYSEX
+        ]);
+        device.send(msg.buffer);
     }
 
     ext.AlgoSetLed = function (led_letter, red, green, blue) {
@@ -544,8 +541,8 @@
             }
         }
     };
-    
-    ext.setMotor = function(motorId, dir, pwm) {
+
+    ext.setMotor = function (motorId, dir, pwm) {
         setMotorSpeed(motorId, pwm);
         setMotorDir(motorId, dir);
     };
@@ -684,8 +681,8 @@
     ext._deviceRemoved = function (dev) {
         console.log('Device removed');
         // Not currently implemented with serial devices
-        if(device != dev) return;
-        if(poller) poller = clearInterval(poller);
+        if (device != dev) return;
+        if (poller) poller = clearInterval(poller);
         device = null;
     };
 
@@ -1311,8 +1308,10 @@
         displyName: 'Algobrain ScratchX'
         // https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - Extension URL (ScratchX)
     };
-    
-    var serial_info = {type: 'serial'};
+
+    var serial_info = {
+        type: 'serial'
+    };
     ScratchExtensions.register('Algobrain', descriptor, ext, serial_info);
 
 })({});

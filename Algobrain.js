@@ -449,105 +449,6 @@
         ]);
         device.send(msg.buffer);
     }
-    // Algobrain ext Functions (ScratchX Blocks) :
-    ext.AlgoSetLed = function (led_letter, red, green, blue) {
-        console.log("AlgoSetLed Called!");
-        if (led_letter === 'led A') {
-            register_neopixel(Led_A_Pin, 1);
-        } else {
-            register_neopixel(Led_B_Pin, 1);
-        }
-        neopixel(0, red, green, blue);
-        console.log("AlgoSetLed Done!");
-    }
-
-    ext.move_robot = function (robot_direction, num_steps) {
-        if (num_steps === '1') {
-            if (robot_direction === 'forward') {
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 127);
-                analogWrite(5, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 1500);
-            } else if (robot_direction === 'backward') {
-                analogWrite(5, 0);
-                analogWrite(3, 0);
-                analogWrite(6, 127);
-                analogWrite(2, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 1500);
-            } else if (robot_direction === 'left') {
-                analogWrite(6, 0);
-                analogWrite(3, 0);
-                analogWrite(5, 127);
-                analogWrite(2, 127);
-            } else if (robot_direction === 'right') {
-                analogWrite(5, 0);
-                analogWrite(2, 0);
-                analogWrite(6, 127);
-                analogWrite(3, 127);
-            } else {
-                analogWrite(5, 0);
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 0);
-            }
-        } else {
-            if (robot_direction === 'forward') {
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 127);
-                analogWrite(5, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 3000);
-            } else if (robot_direction === 'backward') {
-                analogWrite(5, 0);
-                analogWrite(3, 0);
-                analogWrite(6, 127);
-                analogWrite(2, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 3000);
-            } else if (robot_direction === 'left') {
-                analogWrite(6, 0);
-                analogWrite(3, 0);
-                analogWrite(5, 127);
-                analogWrite(2, 127);
-            } else if (robot_direction === 'right') {
-                analogWrite(5, 0);
-                analogWrite(2, 0);
-                analogWrite(6, 127);
-                analogWrite(3, 127);
-            } else {
-                analogWrite(5, 0);
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 0);
-            }
-        }
-    };
-
-    ext.setMotor = function (motorId, dir, pwm) {
-        setMotorSpeed(motorId, pwm);
-        setMotorDir(motorId, dir);
-    };
-    // Ends Here.
 
     ext.whenConnected = function () {
         if (notifyConnection) return true;
@@ -736,6 +637,106 @@
         device = null;
     };
 
+    // Algobrain ext Functions (ScratchX Blocks) :
+    ext.setLedNeoPixel = function (led_letter, red, green, blue) {
+        console.log("AlgoSetLed Called!");
+        if (led_letter === 'led A') {
+            register_neopixel(Led_A_Pin, 1);
+        } else {
+            register_neopixel(Led_B_Pin, 1);
+        }
+        neopixel(0, red, green, blue);
+        console.log("AlgoSetLed Done!");
+    }
+
+    ext.move_robot = function (robot_direction, num_steps) {
+        if (num_steps === '1') {
+            if (robot_direction === 'forward') {
+                analogWrite(6, 0);
+                analogWrite(2, 0);
+                analogWrite(3, 127);
+                analogWrite(5, 127);
+                setTimeout(function () {
+                    analogWrite(5, 0);
+                    analogWrite(6, 0);
+                    analogWrite(2, 0);
+                    analogWrite(3, 0);
+                }, 1500);
+            } else if (robot_direction === 'backward') {
+                analogWrite(5, 0);
+                analogWrite(3, 0);
+                analogWrite(6, 127);
+                analogWrite(2, 127);
+                setTimeout(function () {
+                    analogWrite(5, 0);
+                    analogWrite(6, 0);
+                    analogWrite(2, 0);
+                    analogWrite(3, 0);
+                }, 1500);
+            } else if (robot_direction === 'left') {
+                analogWrite(6, 0);
+                analogWrite(3, 0);
+                analogWrite(5, 127);
+                analogWrite(2, 127);
+            } else if (robot_direction === 'right') {
+                analogWrite(5, 0);
+                analogWrite(2, 0);
+                analogWrite(6, 127);
+                analogWrite(3, 127);
+            } else {
+                analogWrite(5, 0);
+                analogWrite(6, 0);
+                analogWrite(2, 0);
+                analogWrite(3, 0);
+            }
+        } else {
+            if (robot_direction === 'forward') {
+                analogWrite(6, 0);
+                analogWrite(2, 0);
+                analogWrite(3, 127);
+                analogWrite(5, 127);
+                setTimeout(function () {
+                    analogWrite(5, 0);
+                    analogWrite(6, 0);
+                    analogWrite(2, 0);
+                    analogWrite(3, 0);
+                }, 3000);
+            } else if (robot_direction === 'backward') {
+                analogWrite(5, 0);
+                analogWrite(3, 0);
+                analogWrite(6, 127);
+                analogWrite(2, 127);
+                setTimeout(function () {
+                    analogWrite(5, 0);
+                    analogWrite(6, 0);
+                    analogWrite(2, 0);
+                    analogWrite(3, 0);
+                }, 3000);
+            } else if (robot_direction === 'left') {
+                analogWrite(6, 0);
+                analogWrite(3, 0);
+                analogWrite(5, 127);
+                analogWrite(2, 127);
+            } else if (robot_direction === 'right') {
+                analogWrite(5, 0);
+                analogWrite(2, 0);
+                analogWrite(6, 127);
+                analogWrite(3, 127);
+            } else {
+                analogWrite(5, 0);
+                analogWrite(6, 0);
+                analogWrite(2, 0);
+                analogWrite(3, 0);
+            }
+        }
+    };
+
+    ext.setMotor = function (motorId, dir, pwm) {
+        setMotorSpeed(motorId, pwm);
+        setMotorDir(motorId, dir);
+    };
+    // Ends Here.
+
     // Check for GET param 'lang'
     var paramString = window.location.search.replace(/^\?|\/$/g, '');
     var vars = paramString.split("&");
@@ -750,9 +751,9 @@
         en: [
             ['h', 'when device is connected', 'whenConnected'],
             // Algobrain Blocks :
-            [' ', 'set %m.leds to %n red, %n green, and %n blue', 'AlgoSetLed', 'led A', 255, 255, 255],
+            [' ', 'set %m.leds to %n red, %n green, and %n blue', 'setLedNeoPixel', 'LED A', 255, 255, 255],
             [' ', 'move robot %m.robotDirection %m.robotSteps', 'move_robot', 'forward', '1'],
-            [' ', 'move %m.motorSelection %m.motorDirection at %n power', 'move_motor', 'motor A', 'clockwise', 0],
+            [' ', 'move %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'Motor A', 'Clockwise', 0],
             // Ends Here
             [' ', 'connect %m.hwOut to pin %n', 'connectHW', 'led A', 3],
             [' ', 'connect %m.hwIn to analog %n', 'connectHW', 'rotation knob', 0],
@@ -1162,7 +1163,7 @@
             robotSteps: ['1', '2'],
             robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop'],
             motorSelection: ['Motor A', 'Motor B', 'Motor C'],
-            motorDirection: ['Clockwise', 'Counter Clockwise', 'Stop'],
+            motorDirection: ['Clockwise', 'Counter-Clockwise', 'Stop'],
             leds: ['LED A', 'LED B'],
             buttons: ['button A', 'button B', 'button C', 'button D'],
             btnStates: ['pressed', 'released'],

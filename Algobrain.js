@@ -398,14 +398,17 @@
 
     function setMotorSpeed(motorId, pwm) {
         switch (motorId) {
-            case 'Motor A':
+            case 'A':
                 analogWrite(Motor_A_PWM_Pin, pwm);
                 break;
-            case 'Motor B':
+            case 'B':
                 analogWrite(Motor_B_PWM_Pin, pwm);
                 break;
-            case 'Motor C':
+            case 'C':
                 analogWrite(Motor_C_PWM_Pin, pwm);
+                break;
+            default:
+                console.log("default switch at setMotorSpeed");
                 break;
         }
     }
@@ -416,14 +419,17 @@
             dir = 1; // Set as Counter Clockwise
         }
         switch (motorId) {
-            case 'Motor A':
+            case 'A':
                 digitalWrite(Motor_A_Dir_Pin, dir);
                 break;
-            case 'Motor B':
+            case 'B':
                 digitalWrite(Motor_B_Dir_Pin, dir);
                 break;
-            case 'Motor C':
+            case 'C':
                 digitalWrite(Motor_C_Dir_Pin, dir);
+                break;
+            default:
+                console.log("default switch at setMotorDir");
                 break;
         }
     }
@@ -652,7 +658,7 @@
 
     ext.move_robot = function (robot_direction, num_steps) {
         if (num_steps === '1') {
-            if (robot_direction === 'forward') {
+            if (robot_direction === 'Forward') {
                 analogWrite(6, 0);
                 analogWrite(2, 0);
                 analogWrite(3, 127);
@@ -663,7 +669,7 @@
                     analogWrite(2, 0);
                     analogWrite(3, 0);
                 }, 1500);
-            } else if (robot_direction === 'backward') {
+            } else if (robot_direction === 'Backward') {
                 analogWrite(5, 0);
                 analogWrite(3, 0);
                 analogWrite(6, 127);
@@ -674,12 +680,12 @@
                     analogWrite(2, 0);
                     analogWrite(3, 0);
                 }, 1500);
-            } else if (robot_direction === 'left') {
+            } else if (robot_direction === 'Left') {
                 analogWrite(6, 0);
                 analogWrite(3, 0);
                 analogWrite(5, 127);
                 analogWrite(2, 127);
-            } else if (robot_direction === 'right') {
+            } else if (robot_direction === 'Right') {
                 analogWrite(5, 0);
                 analogWrite(2, 0);
                 analogWrite(6, 127);
@@ -691,7 +697,7 @@
                 analogWrite(3, 0);
             }
         } else {
-            if (robot_direction === 'forward') {
+            if (robot_direction === 'Forward') {
                 analogWrite(6, 0);
                 analogWrite(2, 0);
                 analogWrite(3, 127);
@@ -702,7 +708,7 @@
                     analogWrite(2, 0);
                     analogWrite(3, 0);
                 }, 3000);
-            } else if (robot_direction === 'backward') {
+            } else if (robot_direction === 'Backward') {
                 analogWrite(5, 0);
                 analogWrite(3, 0);
                 analogWrite(6, 127);
@@ -713,12 +719,12 @@
                     analogWrite(2, 0);
                     analogWrite(3, 0);
                 }, 3000);
-            } else if (robot_direction === 'left') {
+            } else if (robot_direction === 'Left') {
                 analogWrite(6, 0);
                 analogWrite(3, 0);
                 analogWrite(5, 127);
                 analogWrite(2, 127);
-            } else if (robot_direction === 'right') {
+            } else if (robot_direction === 'Right') {
                 analogWrite(5, 0);
                 analogWrite(2, 0);
                 analogWrite(6, 127);
@@ -1165,7 +1171,7 @@
             robotSteps: ['1', '2'],
             robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop'],
             motorSelection: ['A', 'B', 'C'],
-            motorDirection: ['Clockwise', 'Counter-Clockwise', 'Stop'],
+            motorDirection: ['Clockwise', 'Counter-Clockwise'],
             leds: ['A', 'B'],
             buttons: ['button A', 'button B', 'button C', 'button D'],
             btnStates: ['pressed', 'released'],

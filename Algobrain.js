@@ -237,7 +237,7 @@
                     watchdog = null;
                     connected = true;
                     setTimeout(init, 200);
-                    setupPeripherals();
+                    setTimeout(setupPeripherals, 400);
                 }
                 pinging = false;
                 pingCount = 0;
@@ -393,6 +393,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
+        console.log("Algobrain Version 1.0 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {

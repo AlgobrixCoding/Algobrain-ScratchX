@@ -735,6 +735,7 @@
     ext.setMotor = function (motorId, dir, pwm) {
         setMotorSpeed(motorId, pwm);
         setMotorDir(motorId, dir);
+        console.log("Moving Motor ", motorId, " In ", dir, " Direction at ", pwm, " PWM");
     };
     // Ends Here.
 

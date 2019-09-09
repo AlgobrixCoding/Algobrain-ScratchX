@@ -379,12 +379,15 @@
     }
 
     ext.colorLED = function (led_letter, red, green, blue) {
+        console.log("setLed Called!");
         if (led_letter === 'led A') {
+            console.log("led A Called!");
             register_neopixel(18, 1);
         } else {
             register_neopixel(19, 1);
         }
         neopixel(0, red, green, blue);
+        console.log("setLed Done!");
     }
 
     ext.move_robot = function (robot_direction, num_steps) {

@@ -237,6 +237,7 @@
                     watchdog = null;
                     connected = true;
                     setTimeout(init, 200);
+                    setupPeripherals();
                 }
                 pinging = false;
                 pingCount = 0;
@@ -751,9 +752,9 @@
         en: [
             ['h', 'when device is connected', 'whenConnected'],
             // Algobrain Blocks :
-            [' ', 'set %m.leds to %n red, %n green, and %n blue', 'setLedNeoPixel', 'LED A', 255, 255, 255],
-            [' ', 'move robot %m.robotDirection %m.robotSteps', 'move_robot', 'forward', '1'],
-            [' ', 'move %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'Motor A', 'Clockwise', 0],
+            [' ', 'Set LED %m.leds to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', 'A', 255, 255, 255],
+            [' ', 'Move Robot %m.robotDirection %m.robotSteps', 'move_robot', 'Forward', '1'],
+            [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             // Ends Here
             [' ', 'connect %m.hwOut to pin %n', 'connectHW', 'led A', 3],
             [' ', 'connect %m.hwIn to analog %n', 'connectHW', 'rotation knob', 0],
@@ -1162,9 +1163,9 @@
         en: {
             robotSteps: ['1', '2'],
             robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop'],
-            motorSelection: ['Motor A', 'Motor B', 'Motor C'],
+            motorSelection: ['A', 'B', 'C'],
             motorDirection: ['Clockwise', 'Counter-Clockwise', 'Stop'],
-            leds: ['LED A', 'LED B'],
+            leds: ['A', 'B'],
             buttons: ['button A', 'button B', 'button C', 'button D'],
             btnStates: ['pressed', 'released'],
             hwIn: ['rotation knob', 'light sensor', 'temperature sensor'],

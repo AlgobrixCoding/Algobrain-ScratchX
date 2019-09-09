@@ -84,6 +84,20 @@
 
     var hwList = new HWList();
 
+    // Algobrain Related :
+        // Pinout
+    var Motor_A_PWM_Pin = 9,
+        Motor_A_Dir_Pin = 10,
+        Motor_B_PWM_Pin = 3,
+        Motor_B_Dir_Pin = 2,
+        Motor_C_PWM_Pin = 5,
+        Motor_C_Dir_Pin = 6,
+        Motor_Sleep_Pin = 13,
+        Led_A_Pin = 19,
+        Led_B_Pin = 18,
+        Sensor_A_Pin = A3,
+        Sensor_B_Pin = A2;
+    
     function register_neopixel(pin, count) {
         var msg = new Uint8Array([
             START_SYSEX,
@@ -141,7 +155,6 @@
             var output = new Uint8Array([REPORT_DIGITAL | i, 0x01]);
             device.send(output.buffer);
         }
-
         queryCapabilities();
 
         // TEMPORARY WORKAROUND
@@ -235,7 +248,6 @@
                         device.send(out.buffer);
                     }
                 }
-                console.log("notifyConnection is ", notifyConnection);
                 notifyConnection = true;
                 setTimeout(function () {
                     notifyConnection = false;
@@ -252,6 +264,7 @@
                 }
                 pinging = false;
                 pingCount = 0;
+                setupPeripherals();
                 break;
         }
     }
@@ -378,16 +391,76 @@
         device.send(msg.buffer);
     }
 
-    ext.colorLED = function (led_letter, red, green, blue) {
-        console.log("setLed Called!");
+    function setupMotors() {
+        pinMode(Motor_A_Dir_Pin, OUTPUT);
+        pinMode(Motor_A_PWM_Pin, OUTPUT);
+        pinMode(Motor_B_Dir_Pin, OUTPUT);
+        pinMode(Motor_B_PWM_Pin, OUTPUT);
+        pinMode(Motor_C_Dir_Pin, OUTPUT);
+        pinMode(Motor_C_PWM_Pin, OUTPUT);
+        pinMode(Motor_Sleep_Pin, OUTPUT);
+        digitalWrite(Motor_Sleep_Pin, HIGH);
+    }
+
+    function setupLeds() {
+        register_neopixel(Led_A_Pin, 1);
+        register_neopixel(Led_B_Pin, 1);
+    }
+
+    function setupSensors() {
+        pinMode(Sensor_A_Pin, INPUT);
+        pinMode(Sensor_B_Pin, INPUT);
+    }
+
+    function setupPeripherals() {
+        setupSensors();
+        setupMotors();
+        setupLeds();
+    }
+
+    function setMotorSpeed(motorId, pwm) {
+        switch (motorId)
+        {
+        case 'Motor A':
+            analogWrite(Motor_A_PWM_Pin, pwm);
+            break;
+        case 'Motor B':
+            analogWrite(Motor_B_PWM_Pin, pwm);
+            break;
+        case 'Motor C':
+            analogWrite(Motor_C_PWM_Pin, pwm);
+            break;
+        }
+    }
+
+    function setMotorDir(motorId, _dir) {
+        var dir = 0; // Default is Clockwise
+        if(_dir != 'Clockwise') {
+            dir = 1; // Set as Counter Clockwise
+        }
+        switch (motorId)
+        {
+        case 'Motor A':
+            digitalWrite(Motor_A_Dir_Pin, dir);
+            break;
+        case 'Motor B':
+            digitalWrite(Motor_B_Dir_Pin, dir);
+            break;
+        case 'Motor C':
+            digitalWrite(Motor_C_Dir_Pin, dir);
+            break;
+        }
+    }
+
+    ext.AlgoSetLed = function (led_letter, red, green, blue) {
+        console.log("AlgoSetLed Called!");
         if (led_letter === 'led A') {
-            console.log("led A Called!");
-            register_neopixel(18, 1);
+            register_neopixel(Led_A_Pin, 1);
         } else {
-            register_neopixel(19, 1);
+            register_neopixel(Led_B_Pin, 1);
         }
         neopixel(0, red, green, blue);
-        console.log("setLed Done!");
+        console.log("AlgoSetLed Done!");
     }
 
     ext.move_robot = function (robot_direction, num_steps) {
@@ -471,46 +544,11 @@
             }
         }
     };
-
-    ext.move_motor = function (motor_choice, motor_direction, speed) {
-        if (motor_direction === 'stop') {
-            analogWrite(5, 0);
-            analogWrite(6, 0);
-            analogWrite(2, 0);
-            analogWrite(3, 0);
-            analogWrite(9, 0);
-            analogWrite(10, 0);
-        }
-        //motor A: pin 5 and 6
-        //motor B: pin 2 and 3
-        //motor C: pin 9 and 10
-        if (motor_choice === 'motor A') {
-            if (motor_direction === 'clockwise') {
-                analogWrite(6, 0);
-                analogWrite(5, speed);
-            } else if (motor_direction === 'counterclockwise') {
-                analogWrite(5, 0);
-                analogWrite(6, speed);
-            }
-        } else if (motor_choice === 'motor B') {
-            if (motor_direction === 'clockwise') {
-                analogWrite(3, 0);
-                analogWrite(2, speed);
-            } else if (motor_direction === 'counterclockwise') {
-                analogWrite(2, 0);
-                analogWrite(3, speed);
-            }
-        } else if (motor_choice === 'motor C') {
-            if (motor_direction === 'clockwise') {
-                analogWrite(10, 0);
-                analogWrite(9, speed);
-            } else if (motor_direction === 'counterclockwise') {
-                analogWrite(9, 0);
-                analogWrite(10, speed);
-            }
-        }
+    
+    ext.setMotor = function(motorId, dir, pwm) {
+        setMotorSpeed(motorId, pwm);
+        setMotorDir(motorId, dir);
     };
-
 
     ext.whenConnected = function () {
         if (notifyConnection) return true;
@@ -666,9 +704,11 @@
         if (!device) return;
 
         device.open({
-            stopBits: 0,
+            bufferSize: 8192, // Maximum buffer size
             bitRate: 57600, // This is the baudrate Firmate is using, dont change.
-            ctsFlowControl: 0
+            // stopBits: 0,
+            // ctsFlowControl: 0
+
         });
         console.log('Attempting connection with ' + device.id);
         device.set_receive_handler(function (data) {
@@ -710,9 +750,11 @@
     var blocks = {
         en: [
             ['h', 'when device is connected', 'whenConnected'],
-            [' ', 'set %m.leds to %n red, %n green, and %n blue', 'colorLED', 'led A', 0, 0, 0],
+            // Algobrain Blocks :
+            [' ', 'set %m.leds to %n red, %n green, and %n blue', 'AlgoSetLed', 'led A', 255, 255, 255],
             [' ', 'move robot %m.robotDirection %m.robotSteps', 'move_robot', 'forward', '1'],
             [' ', 'move %m.motorSelection %m.motorDirection at %n power', 'move_motor', 'motor A', 'clockwise', 0],
+            // Ends Here
             [' ', 'connect %m.hwOut to pin %n', 'connectHW', 'led A', 3],
             [' ', 'connect %m.hwIn to analog %n', 'connectHW', 'rotation knob', 0],
             ['-'],
@@ -1119,14 +1161,14 @@
     var menus = {
         en: {
             robotSteps: ['1', '2'],
-            robotDirection: ['forward', 'backward', 'left', 'right', 'stop'],
-            motorSelection: ['motor A', 'motor B', 'motor C'],
-            motorDirection: ['clockwise', 'counterclockwise', 'stop'],
+            robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop'],
+            motorSelection: ['Motor A', 'Motor B', 'Motor C'],
+            motorDirection: ['Clockwise', 'Counter Clockwise', 'Stop'],
+            leds: ['LED A', 'LED B'],
             buttons: ['button A', 'button B', 'button C', 'button D'],
             btnStates: ['pressed', 'released'],
             hwIn: ['rotation knob', 'light sensor', 'temperature sensor'],
             hwOut: ['led A', 'led B', 'led C', 'led D', 'button A', 'button B', 'button C', 'button D', 'servo A', 'servo B', 'servo C', 'servo D'],
-            leds: ['led A', 'led B'],
             outputs: ['on', 'off'],
             ops: ['>', '=', '<'],
         },
@@ -1265,11 +1307,12 @@
     var descriptor = {
         blocks: blocks[lang],
         menus: menus[lang],
-        url: 'https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js'
+        url: 'https://github.com/AlgobrixCoding/Algobrain-ScratchX',
+        displyName: 'Algobrain ScratchX'
+        // https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - Extension URL (ScratchX)
     };
-
-    ScratchExtensions.register('Algobrain', descriptor, ext, {
-        type: 'serial'
-    });
+    
+    var serial_info = {type: 'serial'};
+    ScratchExtensions.register('Algobrain', descriptor, ext, serial_info);
 
 })({});

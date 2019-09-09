@@ -394,7 +394,7 @@
     function setupPeripherals() {
         // Need some real hardware indication to know when the device has been connected. (Debug and UI)
         pinMode(PlayLedPin, OUTPUT);
-        digitalWrite(PlayLedPin, HIGH);
+        ext.digitalWrite(PlayLedPin, HIGH);
         setupSensors();
         setupMotors();
         setupLeds();
@@ -404,13 +404,13 @@
     function setMotorSpeed(motorId, pwm) {
         switch (motorId) {
             case 'A':
-                analogWrite(Motor_A_PWM_Pin, pwm);
+                ext.analogWrite(Motor_A_PWM_Pin, pwm);
                 break;
             case 'B':
-                analogWrite(Motor_B_PWM_Pin, pwm);
+                ext.analogWrite(Motor_B_PWM_Pin, pwm);
                 break;
             case 'C':
-                analogWrite(Motor_C_PWM_Pin, pwm);
+                ext.analogWrite(Motor_C_PWM_Pin, pwm);
                 break;
             default:
                 console.log("default switch at setMotorSpeed");
@@ -425,13 +425,13 @@
         }
         switch (motorId) {
             case 'A':
-                digitalWrite(Motor_A_Dir_Pin, dir);
+                ext.digitalWrite(Motor_A_Dir_Pin, dir);
                 break;
             case 'B':
-                digitalWrite(Motor_B_Dir_Pin, dir);
+                ext.digitalWrite(Motor_B_Dir_Pin, dir);
                 break;
             case 'C':
-                digitalWrite(Motor_C_Dir_Pin, dir);
+                ext.digitalWrite(Motor_C_Dir_Pin, dir);
                 break;
             default:
                 console.log("default switch at setMotorDir");

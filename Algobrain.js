@@ -94,9 +94,9 @@
         Motor_C_Dir_Pin = 6,
         Motor_Sleep_Pin = 13,
         Led_A_Pin = 19,
-        Led_B_Pin = 18,
-        Sensor_A_Pin = A3,
-        Sensor_B_Pin = A2;
+        Led_B_Pin = 18;
+        // Sensor_A_Pin = A3,
+        // Sensor_B_Pin = A2;
 
     function HWList() {
         this.devices = [];
@@ -384,8 +384,8 @@
     }
 
     function setupSensors() {
-        pinMode(Sensor_A_Pin, INPUT);
-        pinMode(Sensor_B_Pin, INPUT);
+        // pinMode(Sensor_A_Pin, INPUT);
+        // pinMode(Sensor_B_Pin, INPUT);
     }
 
     function setupPeripherals() {

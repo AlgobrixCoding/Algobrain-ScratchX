@@ -365,7 +365,8 @@
         ]);
         device.send(msg.buffer);
     }
-
+    
+    // Algobrain Functions :
     function setupMotors() {
         pinMode(Motor_A_Dir_Pin, OUTPUT);
         pinMode(Motor_A_PWM_Pin, OUTPUT);
@@ -448,7 +449,7 @@
         ]);
         device.send(msg.buffer);
     }
-
+    // Algobrain ext Functions (ScratchX Blocks) :
     ext.AlgoSetLed = function (led_letter, red, green, blue) {
         console.log("AlgoSetLed Called!");
         if (led_letter === 'led A') {
@@ -546,6 +547,7 @@
         setMotorSpeed(motorId, pwm);
         setMotorDir(motorId, dir);
     };
+    // Ends Here.
 
     ext.whenConnected = function () {
         if (notifyConnection) return true;
@@ -703,8 +705,8 @@
         device.open({
             bufferSize: 8192, // Maximum buffer size
             bitRate: 57600, // This is the baudrate Firmate is using, dont change.
-            // stopBits: 0,
-            // ctsFlowControl: 0
+            stopBits: 0,
+            ctsFlowControl: 0
 
         });
         console.log('Attempting connection with ' + device.id);

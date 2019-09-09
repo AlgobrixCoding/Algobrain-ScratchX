@@ -664,7 +664,7 @@
 
         device.open({
             stopBits: 0,
-            bitRate: 9600,
+            bitRate: 57600, // This is the baudrate Firmate is using, dont change.
             ctsFlowControl: 0
         });
         console.log('Attempting connection with ' + device.id);

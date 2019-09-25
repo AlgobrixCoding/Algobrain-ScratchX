@@ -781,7 +781,7 @@
             // Algobrain Blocks :
             [' ', 'Move Motor %m.motorSelect %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             [' ', 'Move Robot %m.robotDirection %m.robotSteps', 'move_robot', 'Forward', '1'],
-            [' ', 'Set LED %m.ledSelect to m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
+            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
             // Ends Here
         ],
@@ -789,7 +789,7 @@
             // Algobrain Blocks :
             [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             [' ', 'Move Robot %m.robotDirection %m.robotSteps', 'move_robot', 'Forward', '1'],
-            [' ', 'Set LED %m.ledSelect to m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
+            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1' , 0, 0, 0]
             // Ends Here
         ]

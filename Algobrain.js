@@ -397,7 +397,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.8 - Setup Complete ");
+        console.log("Algobrain Version 2.0 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {
@@ -656,10 +656,6 @@
         } else {
             register_neopixel(Led_B_Pin, 1);
         }
-        console.log(menus[lang]);
-        
-        console.log("color= " + color);
-        console.log(menus[lang].ledColor[0]);
         switch(color) {
             case menus[lang].ledColor[0]:
                 neopixel(0, 255, 0, 0);
@@ -682,7 +678,7 @@
         neopixel(0, red, green, blue);
     };
 
-    ext.move_robot = function (robot_direction, num_steps) {
+    ext.moveRobot = function (robot_direction, num_steps) {
         if (num_steps === '1') {
             if (robot_direction === 'Forward') {
                 analogWrite(6, 0);
@@ -790,16 +786,17 @@
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
             // Ends Here
-        ],
-        he: [
-            // Algobrain Blocks :
-            [' ', '%n של במהירות %m.motorDirection - ב %m.motorSelect מנוע הפעל', 'setMotor', 0, 'השעון כיוון', 'A'],
-            [' ', '%m.robotDirection בכיוון צעדים %n רובוט הזז', 'moveRobot', 1, 'קדימה'],
-            [' ', 'מעלות %n של בזווית %m.robotRotate בכיוון רובוט סובב', 'rotateRobot', 90, 'שמאלה'],
-            [' ', '%m.ledColor בצבע %m.ledSelect לד הפעל', 'אדום', '1', 'setLedNeoPixelColor'],
-            [' ', 'כחול %n, ירוק %n, אדום %n בגוונים %m.ledSelect לד הפעל', 0, 0, 0, '1' , 'setLedNeoPixel']
-            // Ends Here
         ]
+        // Still working on hebrew
+        // he: [
+        //     // Algobrain Blocks :
+        //     [' ', 'Move Motor %m.motorSelect %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
+        //     [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
+        //     [' ', 'Rotate Robot %m.robotRotate at %n degrees', 'rotateRobot', 'Left', 90],
+        //     [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
+        //     [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
+        //     // Ends Here
+        // ]
     };
 
     var menus = {
@@ -813,18 +810,20 @@
             // Move Robot
             robotDirection: ['Forward', 'Backward'],
             robotRotate: ['Left', 'Right']
-        },
-        he: {
-            // Move Motor
-            motorSelect: ['A', 'B', 'C'],
-            motorDirection: ['השעון כיוון', 'השעון כיוון נגד'],
-            // LED's
-            ledSelect: ['1', '2'],
-            ledColor: ['אדום', 'ירוק', 'כחול'],
-            // Move Robot
-            robotDirection: ['קדימה', 'אחורה'],
-            robotRotate: ['שמאלה', 'ימינה']
+            // Get Sensor
         }
+        //
+        // he: {
+        //     // Move Motor
+        //     motorSelect: ['A', 'B', 'C'],
+        //     motorDirection: ['כיוון השעון', 'נגד כיוון השעון'],
+        //     // LED's
+        //     ledSelect: ['1', '2'],
+        //     ledColor: ['אדום', 'ירוק', 'כחול'],
+        //     // Move Robot
+        //     robotDirection: ['קדימה', 'אחורה'],
+        //     robotRotate: ['שמאלה', 'ימינה']
+        // }
     };
 
     var descriptor = {
@@ -834,6 +833,7 @@
         displyName: 'Algobrain ScratchX'
         // https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - Extension URL (ScratchX)
         // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - English (Default)
+        // Hebrew still in production
         // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js&lang=he - Hebrew
     };
 

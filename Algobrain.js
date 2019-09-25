@@ -397,7 +397,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.55 - Setup Complete ");
+        console.log("Algobrain Version 1.6 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {

@@ -397,7 +397,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.2 - Setup Complete ");
+        console.log("Algobrain Version 1.3 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {
@@ -656,6 +656,8 @@
         } else {
             register_neopixel(Led_B_Pin, 1);
         }
+        console.log(menus);
+        console.log(menus.ledColor);
         switch(color) {
             case menus.ledColor[0]:
                 neopixel(0, 255, 0, 0);

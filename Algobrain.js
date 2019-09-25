@@ -656,8 +656,7 @@
         } else {
             register_neopixel(Led_B_Pin, 1);
         }
-        console.log(menus);
-        console.log(menus[lang]);
+        console.log(menus[lang][ledColor][0]);
         switch(color) {
             case menus[lang][ledColor][0]:
                 neopixel(0, 255, 0, 0);

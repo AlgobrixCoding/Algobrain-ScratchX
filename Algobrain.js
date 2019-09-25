@@ -790,6 +790,7 @@
         ],
         he: [
             // Algobrain Blocks :
+            [' ', 'הפעל מנוע %m.motorSelect בכיוון %m.motorDirection במהירות של %n', 'setMotor', 'A', 'כיוון השעון', 0],
             [' ', '%n במהירות של %m.motorDirection בכיוון %m.motorSelect הפעל מנוע', 'setMotor', 0, 'כיוון השעון', 'A'],
             [' ', '%m.robotDirection צעדים בכיוון %n הזז רובוט', 'moveRobot', 1, 'קדימה'],
             [' ', 'מעלות %n בזווית של %m.robotRotate סובב רובוט בכיוון', 'rotateRobot', 90, 'שמאלה'],

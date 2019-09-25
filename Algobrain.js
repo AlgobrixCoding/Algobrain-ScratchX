@@ -652,7 +652,7 @@
     // Algobrain ext Functions (ScratchX Blocks) :
     ext.setLedNeoPixel = function (led_letter, red, green, blue) {
         console.log("AlgoSetLed Called!");
-        if (led_letter === 'led A') {
+        if (led_letter === 'A') {
             register_neopixel(Led_A_Pin, 1);
         } else {
             register_neopixel(Led_B_Pin, 1);

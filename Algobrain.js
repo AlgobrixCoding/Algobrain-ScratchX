@@ -787,9 +787,10 @@
         ],
         he: [
             // Algobrain Blocks :
-            [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
+            [' ', 'הפעל מנוע %m.motorSelect בכיוון %m.motorDirection במהירות של %n', 'setMotor', 'A', 'כיוון השעון', 0],
+            [' ', '%n במהירות של %m.motorDirection בכיוון %m.motorSelect הפעל מנוע', 'setMotor', 0, 'כיוון השעון', 'A'],
             [' ', 'Move Robot %m.robotDirection %m.robotSteps', 'move_robot', 'Forward', '1'],
-            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
+            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'אדום'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1' , 0, 0, 0]
             // Ends Here
         ]
@@ -805,7 +806,7 @@
             ledColor: ['Red', 'Green', 'Blue'],
             // Move Robot
             robotSteps: ['1', '2'],
-            robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop'],
+            robotDirection: ['Forward', 'Backward', 'Left', 'Right', 'Stop']
         },
         he: {
             // Move Motor
@@ -816,7 +817,7 @@
             ledColor: ['אדום', 'ירוק', 'כחול'],
             // Move Robot
             robotSteps: ['1', '2'],
-            robotDirection: ['קדימה', 'אחורה', 'שמאלה', 'ימינה', 'עצור'],
+            robotDirection: ['קדימה', 'אחורה', 'שמאלה', 'ימינה', 'עצור']
         }
     };
 

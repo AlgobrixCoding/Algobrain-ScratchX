@@ -397,7 +397,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.1 - Setup Complete ");
+        console.log("Algobrain Version 1.2 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {
@@ -813,7 +813,7 @@
             motorDirection: ['כיוון השעון', 'נגד כיוון השעון'],
             // LED's
             ledSelect: ['1', '2'],
-            ledColor: ['Red', 'Green', 'Blue'],
+            ledColor: ['אדום', 'ירוק', 'כחול'],
             // Move Robot
             robotSteps: ['1', '2'],
             robotDirection: ['קדימה', 'אחורה', 'שמאלה', 'ימינה', 'עצור'],

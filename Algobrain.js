@@ -419,7 +419,7 @@
 
     function setMotorDir(motorId, _dir) {
         var dir = 0; // Default is Clockwise
-        if (_dir != 'Clockwise') {
+        if (_dir != menus[lang][motorDirection][0]) {
             dir = 1; // Set as Counter Clockwise
         }
         switch (motorId) {
@@ -659,13 +659,13 @@
         console.log(menus);
         console.log(menus[lang]);
         switch(color) {
-            case menus[lang].ledColor[0]:
+            case menus[lang][ledColor][0]:
                 neopixel(0, 255, 0, 0);
                 break;
-            case menus[lang].ledColor[1]:
+            case menus[lang][ledColor][1]:
                 neopixel(0, 0, 255, 0);
                 break;
-            case menus[lang].ledColor[2]:
+            case menus[lang][ledColor][2]:
                 neopixel(0, 0, 0, 255);
                 break;
         }

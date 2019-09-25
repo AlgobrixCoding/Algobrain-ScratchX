@@ -709,7 +709,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
       {
         int pin = argv[0];
         int count = argv[1];
-
+        
         if (neopixels != NULL) {
           delete neopixels;
         }

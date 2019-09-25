@@ -239,7 +239,7 @@
                     watchdog = null;
                     connected = true;
                     setTimeout(init, 200);
-                    setTimeout(setupPeripherals, 400);
+                    setTimeout(setupPeripherals, 1000);
                 }
                 pinging = false;
                 pingCount = 0;
@@ -394,7 +394,7 @@
     function setupPeripherals() {
         // Need some real hardware indication to know when the device has been connected. (Debug and UI)
         pinMode(PlayLedPin, OUTPUT);
-        ext.digitalWrite(PlayLedPin, HIGH);
+        digitalWrite(PlayLedPin, HIGH);
         setupSensors();
         setupMotors();
         setupLeds();
@@ -404,13 +404,13 @@
     function setMotorSpeed(motorId, pwm) {
         switch (motorId) {
             case 'A':
-                ext.analogWrite(Motor_A_PWM_Pin, pwm);
+                analogWrite(Motor_A_PWM_Pin, pwm);
                 break;
             case 'B':
-                ext.analogWrite(Motor_B_PWM_Pin, pwm);
+                analogWrite(Motor_B_PWM_Pin, pwm);
                 break;
             case 'C':
-                ext.analogWrite(Motor_C_PWM_Pin, pwm);
+                analogWrite(Motor_C_PWM_Pin, pwm);
                 break;
             default:
                 console.log("default switch at setMotorSpeed");
@@ -425,13 +425,13 @@
         }
         switch (motorId) {
             case 'A':
-                ext.digitalWrite(Motor_A_Dir_Pin, dir);
+                digitalWrite(Motor_A_Dir_Pin, dir);
                 break;
             case 'B':
-                ext.digitalWrite(Motor_B_Dir_Pin, dir);
+                digitalWrite(Motor_B_Dir_Pin, dir);
                 break;
             case 'C':
-                ext.digitalWrite(Motor_C_Dir_Pin, dir);
+                digitalWrite(Motor_C_Dir_Pin, dir);
                 break;
             default:
                 console.log("default switch at setMotorDir");

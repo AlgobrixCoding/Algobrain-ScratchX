@@ -397,7 +397,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.7 - Setup Complete ");
+        console.log("Algobrain Version 1.8 - Setup Complete ");
     }
 
     function setMotorSpeed(motorId, pwm) {
@@ -793,12 +793,11 @@
         ],
         he: [
             // Algobrain Blocks :
-            [' ', 'הפעל מנוע %m.motorSelect בכיוון %m.motorDirection במהירות של %n', 'setMotor', 'A', 'כיוון השעון', 255],
-            [' ', '%n במהירות של %m.motorDirection בכיוון %m.motorSelect הפעל מנוע', 'setMotor', 0, 'כיוון השעון', 'A'],
-            [' ', '%m.robotDirection צעדים בכיוון %n הזז רובוט', 'moveRobot', 1, 'קדימה'],
-            [' ', 'מעלות %n בזווית של %m.robotRotate סובב רובוט בכיוון', 'rotateRobot', 90, 'שמאלה'],
-            [' ', '%m.ledColor בצבע %m.ledSelect הפעל לד', 'אדום', '1', 'setLedNeoPixelColor'],
-            [' ', 'כחול %n, ירוק %n, אדום %n בגוונים %m.ledSelect הפעל לד', 0, 0, 0, '1' , 'setLedNeoPixel']
+            [' ', '%n של במהירות %m.motorDirection - ב %m.motorSelect מנוע הפעל', 'setMotor', 0, 'השעון כיוון', 'A'],
+            [' ', '%m.robotDirection בכיוון צעדים %n רובוט הזז', 'moveRobot', 1, 'קדימה'],
+            [' ', 'מעלות %n של בזווית %m.robotRotate בכיוון רובוט סובב', 'rotateRobot', 90, 'שמאלה'],
+            [' ', '%m.ledColor בצבע %m.ledSelect לד הפעל', 'אדום', '1', 'setLedNeoPixelColor'],
+            [' ', 'כחול %n, ירוק %n, אדום %n בגוונים %m.ledSelect לד הפעל', 0, 0, 0, '1' , 'setLedNeoPixel']
             // Ends Here
         ]
     };
@@ -818,7 +817,7 @@
         he: {
             // Move Motor
             motorSelect: ['A', 'B', 'C'],
-            motorDirection: ['כיוון השעון', 'נגד כיוון השעון'],
+            motorDirection: ['השעון כיוון', 'השעון כיוון נגד'],
             // LED's
             ledSelect: ['1', '2'],
             ledColor: ['אדום', 'ירוק', 'כחול'],

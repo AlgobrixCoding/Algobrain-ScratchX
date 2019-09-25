@@ -657,15 +657,15 @@
             register_neopixel(Led_B_Pin, 1);
         }
         console.log(menus);
-        console.log(menus.ledColor);
+        console.log(menus[lang]);
         switch(color) {
-            case menus.ledColor[0]:
+            case menus[lang].ledColor[0]:
                 neopixel(0, 255, 0, 0);
                 break;
-            case menus.ledColor[1]:
+            case menus[lang].ledColor[1]:
                 neopixel(0, 0, 255, 0);
                 break;
-            case menus.ledColor[2]:
+            case menus[lang].ledColor[2]:
                 neopixel(0, 0, 0, 255);
                 break;
         }
@@ -831,6 +831,7 @@
         url: 'https://github.com/AlgobrixCoding/Algobrain-ScratchX',
         displyName: 'Algobrain ScratchX'
         // https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - Extension URL (ScratchX)
+        // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - English (Default)
         // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js&lang=he - Hebrew
     };
 

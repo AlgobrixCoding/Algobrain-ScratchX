@@ -411,7 +411,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.4 - Setup Complete ");
+        console.log("Algobrain Version 2.5 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -786,7 +786,15 @@
         setTimeout(function() {
             isInternalTimeout = true;
         }, 100)
-        while(!isInternalTimeout && !newPulseInResult) {} // Wait for the result buffer
+        while(true) {
+            if(isInternalTimeout || newPulseInResult) {
+                console.log(isInternalTimeout);
+                console.log(newPulseInResult);
+                break;
+            }
+                
+            console.log("Waiting...");
+        } // Wait for the result buffer
         console.log("FROM getSensor");
         console.log(String.fromCharCode.apply(String, pulseInBuffer));
         console.log(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));

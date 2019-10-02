@@ -793,7 +793,6 @@
                 console.log(newPulseInResult);
                 break;
             } 
-            console.log("Waiting...");
         } // Wait for the result buffer
         console.log("FROM getSensor");
         console.log(String.fromCharCode.apply(String, pulseInBuffer));

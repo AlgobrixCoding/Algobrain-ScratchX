@@ -29,7 +29,9 @@
         CAPABILITY_QUERY = 0x6B,
         CAPABILITY_RESPONSE = 0x6C,
         NEOPIXEL = 0x72,
-        NEOPIXEL_REGISTER = 0x74;
+        NEOPIXEL_REGISTER = 0x73,
+        PULSE_IN = 0x74,
+        PULSE_IN_RESPONSE = 0x75;
 
     var INPUT = 0x00,
         OUTPUT = 0x01,
@@ -243,6 +245,9 @@
                 pinging = false;
                 pingCount = 0;
                 break;
+            case PULSE_IN_RESPONSE:
+                console.log("Pulse In Response: " + storedInputData);
+                break;
         }
     }
 
@@ -381,8 +386,8 @@
     }
 
     function setupLeds() {
-        register_neopixel(Led_A_Pin, 1);
-        register_neopixel(Led_B_Pin, 1);
+        registerNeopixel(Led_A_Pin, 1);
+        registerNeopixel(Led_B_Pin, 1);
     }
 
     function setupSensors() {
@@ -397,9 +402,15 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.1 - Setup Complete ");
+        console.log("Algobrain Version 2.2 - Setup Complete ");
     }
-
+    
+    function setMotor(motorId, dir, pwm) {
+        setMotorSpeed(motorId, pwm);
+        setMotorDir(motorId, dir);
+        console.log("Moving Motor ", motorId, " In ", dir, " Direction at ", pwm, " PWM");
+    }
+    
     function setMotorSpeed(motorId, pwm) {
         switch (motorId) {
             case 'A':
@@ -432,13 +443,10 @@
             case 'C':
                 digitalWrite(Motor_C_Dir_Pin, dir);
                 break;
-            default:
-                console.log("default switch at setMotorDir");
-                break;
         }
     }
 
-    function register_neopixel(pin, count) {
+    function registerNeopixel(pin, count) {
         var msg = new Uint8Array([
             START_SYSEX,
             NEOPIXEL_REGISTER,
@@ -449,7 +457,7 @@
         device.send(msg.buffer);
     }
 
-    function neopixel(index, red, green, blue) {
+    function setNeopixel(index, red, green, blue) {
         var msg = new Uint8Array([
             START_SYSEX,
             NEOPIXEL,
@@ -461,6 +469,19 @@
         ]);
         device.send(msg.buffer);
     }
+
+    function pulseIn(pin, value, timeout) {
+        var msg = new Uint8Array([
+            START_SYSEX,
+            PULSE_IN,
+            pin,
+            value,
+            timeout,
+            END_SYSEX
+        ]);
+        device.send(msg.buffer);
+    }
+
     // Ends here.
 
     ext.whenConnected = function () {
@@ -650,72 +671,72 @@
     };
 
     // Algobrain ext Functions (ScratchX Blocks) :
-    ext.setLedNeoPixelColor = function(ledSelect, color) {
+    ext.setNeopixel = function(ledSelect, color) {
         if (ledSelect == '1') {
-            register_neopixel(Led_A_Pin, 1);
+            registerNeopixel(Led_A_Pin, 1);
         } else {
-            register_neopixel(Led_B_Pin, 1);
+            registerNeopixel(Led_B_Pin, 1);
         }
         switch(color) {
             case menus[lang].ledColor[0]:
-                neopixel(0, 255, 0, 0);
+                setNeopixel(0, 255, 0, 0);
                 break;
             case menus[lang].ledColor[1]:
-                neopixel(0, 0, 255, 0);
+                setNeopixel(0, 0, 255, 0);
                 break;
             case menus[lang].ledColor[2]:
-                neopixel(0, 0, 0, 255);
+                setNeopixel(0, 0, 0, 255);
                 break;
         }
     };
 
-    ext.setLedNeoPixel = function (ledSelect, red, green, blue) {
+    ext.setNeopixel = function (ledSelect, red, green, blue) {
         if (ledSelect == '1') {
-            register_neopixel(Led_A_Pin, 1);
+            registerNeopixel(Led_A_Pin, 1);
         } else {
-            register_neopixel(Led_B_Pin, 1);
+            registerNeopixel(Led_B_Pin, 1);
         }
-        neopixel(0, red, green, blue);
+        setNeopixel(0, red, green, blue);
     };
 
     ext.moveRobot = function (robotDir, numSteps) {
         if(robotDir == menus[lang].robotDirection[0]) {
             // Forward
-            ext.setMotor('A', 'Counter-Clockwise', 170);
-            ext.setMotor('B', 'Clockwise', 170);
+            setMotor('A', 'Counter-Clockwise', 170);
+            setMotor('B', 'Clockwise', 170);
             
         } else {
             // Backwards
-            ext.setMotor('A', 'Clockwise', 170);
-            ext.setMotor('B', 'Counter-Clockwise', 170);
+            setMotor('A', 'Clockwise', 170);
+            setMotor('B', 'Counter-Clockwise', 170);
         }
         switch(numSteps) {
             case 0:
-                ext.setMotor('A', 'Clockwise', 0);
-                ext.setMotor('B', 'Clockwise', 0);
+                setMotor('A', 'Clockwise', 0);
+                setMotor('B', 'Clockwise', 0);
                 break;
             case 1:
                 setTimeout(function() {
-                    ext.setMotor('A', 'Clockwise', 0);
-                    ext.setMotor('B', 'Clockwise', 0);
+                    setMotor('A', 'Clockwise', 0);
+                    setMotor('B', 'Clockwise', 0);
                 }, 1400)
                 break;
             case 2:
                     setTimeout(function() {
-                        ext.setMotor('A', 'Clockwise', 0);
-                        ext.setMotor('B', 'Clockwise', 0);
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
                     }, 2750)
                     break;
             case 3:
                     setTimeout(function() {
-                        ext.setMotor('A', 'Clockwise', 0);
-                        ext.setMotor('B', 'Clockwise', 0);
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
                     }, 4100)
                     break;
             default:
                     setTimeout(function() {
-                        ext.setMotor('A', 'Clockwise', 0);
-                        ext.setMotor('B', 'Clockwise', 0);
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
                     }, 1500 * numSteps)
                     break;
         }
@@ -724,27 +745,40 @@
     ext.rotateRobot = function (robotRotate, degrees) {
         if(robotRotate == menus[lang].robotRotation[0]) {
             // Left
-            ext.setMotor('A', 'Counter-Clockwise', 85);
-            ext.setMotor('B', 'Counter-Clockwise', 85);
+            setMotor('A', 'Counter-Clockwise', 85);
+            setMotor('B', 'Counter-Clockwise', 85);
             
         } else {
             // Right
-            ext.setMotor('A', 'Clockwise', 85);
-            ext.setMotor('B', 'Clockwise', 85);
+            setMotor('A', 'Clockwise', 85);
+            setMotor('B', 'Clockwise', 85);
         }
         // Calculate the time of the given degrees
         // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
         var deltaTime = (degrees % 360.0) * 2200 / 90;
         setTimeout(function() {
-            ext.setMotor('A', 'Clockwise', 0);
-            ext.setMotor('B', 'Clockwise', 0);
+            setMotor('A', 'Clockwise', 0);
+            setMotor('B', 'Clockwise', 0);
         }, deltaTime)
     };
 
     ext.setMotor = function (motorId, dir, pwm) {
-        setMotorSpeed(motorId, pwm);
-        setMotorDir(motorId, dir);
-        console.log("Moving Motor ", motorId, " In ", dir, " Direction at ", pwm, " PWM");
+        setMotor(motorId, dir, pwm);
+    };
+
+    ext.getSensor = function (sensorId) {
+        let pulseTimeout = 4000;
+        let cycleTime = 2000;
+        let pwmValueH = 0;
+        let dutyCycle = 0;
+        pwmValueH = pulseIn(sensorId, HIGH, pulseTimeout);
+        
+        if (pwmValueH != 0)
+            dutyCycle = (float(pwmValueH) / float(cycleTime)) * 100.0;
+        else if (digitalRead(sensor_analogPin[sensorID]))
+            dutyCycle = 100;
+        console.log("getSensor Value: " + round(dutyCycle / 10));
+        return round(dutyCycle / 10);
     };
     // Ends Here.
 
@@ -761,11 +795,12 @@
     var blocks = {
         en: [
             // Algobrain Blocks :
-            [' ', 'Move Motor %m.motorSelect %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
+            [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
             [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
-            [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
+            [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0],
+            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
             // Ends Here
         ]
         // Still working on hebrew
@@ -783,15 +818,16 @@
     var menus = {
         en: {
             // Move Motor
-            motorSelect: ['A', 'B', 'C'],
+            motorSelection: ['A', 'B', 'C'],
             motorDirection: ['Clockwise', 'Counter-Clockwise'],
             // LED's
             ledSelect: ['1', '2'],
             ledColor: ['Red', 'Green', 'Blue'],
             // Move Robot
             robotDirection: ['Forward', 'Backward'],
-            robotRotation: ['Left', 'Right']
+            robotRotation: ['Left', 'Right'],
             // Get Sensor
+            sensorSelection: ['1', '2']
         }
         //
         // he: {

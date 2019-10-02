@@ -45,12 +45,14 @@
 /* NEOPIXELS */
 #include <Adafruit_NeoPixel.h>
 #define NEOPIXEL 0x72
-#define NEOMATRIX 0x73
-#define NEOPIXEL_REGISTER 0x74
-#define NEOMATRIX_REGISTER 0x75
+#define NEOPIXEL_REGISTER 0x73
 #define MAX_NEO 1
 
 Adafruit_NeoPixel *neopixels = NULL;
+
+/* PULSE_IN */
+#define PULSE_IN 0x74
+#define PULSE_IN_RESPONSE 0x75
 
 /*==============================================================================
  * GLOBAL VARIABLES
@@ -722,6 +724,23 @@ void sysexCallback(byte command, byte argc, byte *argv)
         int blue = argv[3];
         neopixels->setPixelColor(index, neopixels->Color(red, green, blue));
         neopixels->show();
+      }
+      break;
+    case PULSE_IN:
+      {
+        int pin = argv[0];
+        int value = argv[1];
+        unsigned long timeout= argv[2];
+        String result = String(pulseIn(pin, value, timeout));
+        uint8_t msgLength = result.length() + 1;
+        Firmata.write(START_SYSEX);
+        Firmata.write(PULSE_IN_RESPONSE);
+        byte resultBytes[msgLength];
+        result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
+        for (byte i = 0; i < msgLength; i++) {
+          Firmata.write(resultBytes[i]);
+        }
+        Firmata.write(END_SYSEX);
       }
       break;
   }

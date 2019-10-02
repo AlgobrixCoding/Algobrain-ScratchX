@@ -240,13 +240,14 @@
                     watchdog = null;
                     connected = true;
                     setTimeout(init, 200);
-                    setTimeout(setupPeripherals, 1000);
+                    setTimeout(setupPeripherals, 500);
                 }
                 pinging = false;
                 pingCount = 0;
                 break;
             case PULSE_IN_RESPONSE:
-                console.log("Pulse In Response: " + storedInputData);
+                console.log("Pulse In Response: ");
+                console.log(storedInputData);
                 break;
         }
     }
@@ -402,7 +403,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.2 - Setup Complete ");
+        console.log("Algobrain Version 2.3 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {

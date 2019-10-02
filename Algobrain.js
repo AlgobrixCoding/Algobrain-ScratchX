@@ -100,6 +100,10 @@
         PlayLedPin = 4;
         Sensor_A_Pin = 17,
         Sensor_B_Pin = 16;
+    // Pulse In Function
+    var pulseInBuffer = [];
+    var pulseInResult;
+    var newPulseInResult = false;
 
     function HWList() {
         this.devices = [];
@@ -246,8 +250,12 @@
                 pingCount = 0;
                 break;
             case PULSE_IN_RESPONSE:
-                console.log("Pulse In Response: ");
-                console.log(storedInputData);
+                pulseInBuffer.length = 0; // Clear the buffer
+                for(var i = 1; i < sysexBytesRead; i++)
+                    pulseInBuffer.push(storedInputData[i]);
+                console.log("FROM PULSE_IN_RESPONSE");
+                console.log(String.fromCharCode.apply(String, pulseInBuffer));
+                newPulseInResult = true;
                 break;
         }
     }
@@ -403,7 +411,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.3 - Setup Complete ");
+        console.log("Algobrain Version 2.4 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -772,7 +780,16 @@
         let cycleTime = 2000;
         let pwmValueH = 0;
         let dutyCycle = 0;
+        let isInternalTimeout = false;
+        newPulseInResult = false; // Reset the result flag
         pwmValueH = pulseIn(sensorId, HIGH, pulseTimeout);
+        setTimeout(function() {
+            isInternalTimeout = true;
+        }, 100)
+        while(!isInternalTimeout && !newPulseInResult) {} // Wait for the result buffer
+        console.log("FROM getSensor");
+        console.log(String.fromCharCode.apply(String, pulseInBuffer));
+        console.log(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
         
         if (pwmValueH != 0)
             dutyCycle = (float(pwmValueH) / float(cycleTime)) * 100.0;

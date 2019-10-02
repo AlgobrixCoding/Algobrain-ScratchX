@@ -678,86 +678,67 @@
         neopixel(0, red, green, blue);
     };
 
-    ext.moveRobot = function (robot_direction, num_steps) {
-        if (num_steps === '1') {
-            if (robot_direction === 'Forward') {
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 127);
-                analogWrite(5, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 1500);
-            } else if (robot_direction === 'Backward') {
-                analogWrite(5, 0);
-                analogWrite(3, 0);
-                analogWrite(6, 127);
-                analogWrite(2, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 1500);
-            } else if (robot_direction === 'Left') {
-                analogWrite(6, 0);
-                analogWrite(3, 0);
-                analogWrite(5, 127);
-                analogWrite(2, 127);
-            } else if (robot_direction === 'Right') {
-                analogWrite(5, 0);
-                analogWrite(2, 0);
-                analogWrite(6, 127);
-                analogWrite(3, 127);
-            } else {
-                analogWrite(5, 0);
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 0);
-            }
+    ext.moveRobot = function (robotDir, numSteps) {
+        if(robotDir == menus[lang].robotDirection[0]) {
+            // Forward
+            setMotor('A', 'Counter-Clockwise', 170);
+            setMotor('B', 'Clockwise', 170);
+            
         } else {
-            if (robot_direction === 'Forward') {
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 127);
-                analogWrite(5, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 3000);
-            } else if (robot_direction === 'Backward') {
-                analogWrite(5, 0);
-                analogWrite(3, 0);
-                analogWrite(6, 127);
-                analogWrite(2, 127);
-                setTimeout(function () {
-                    analogWrite(5, 0);
-                    analogWrite(6, 0);
-                    analogWrite(2, 0);
-                    analogWrite(3, 0);
-                }, 3000);
-            } else if (robot_direction === 'Left') {
-                analogWrite(6, 0);
-                analogWrite(3, 0);
-                analogWrite(5, 127);
-                analogWrite(2, 127);
-            } else if (robot_direction === 'Right') {
-                analogWrite(5, 0);
-                analogWrite(2, 0);
-                analogWrite(6, 127);
-                analogWrite(3, 127);
-            } else {
-                analogWrite(5, 0);
-                analogWrite(6, 0);
-                analogWrite(2, 0);
-                analogWrite(3, 0);
-            }
+            // Backwards
+            setMotor('A', 'Clockwise', 170);
+            setMotor('B', 'Counter-Clockwise', 170);
         }
+        switch(numSteps) {
+            case 0:
+                setMotor('A', 'Clockwise', 0);
+                setMotor('B', 'Clockwise', 0);
+                break;
+            case 1:
+                setTimeout(function() {
+                    setMotor('A', 'Clockwise', 0);
+                    setMotor('B', 'Clockwise', 0);
+                }, 1400)
+                break;
+            case 2:
+                    setTimeout(function() {
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
+                    }, 2750)
+                    break;
+            case 3:
+                    setTimeout(function() {
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
+                    }, 4100)
+                    break;
+            default:
+                    setTimeout(function() {
+                        setMotor('A', 'Clockwise', 0);
+                        setMotor('B', 'Clockwise', 0);
+                    }, 1500 * numSteps)
+                    break;
+        }
+    };
+
+    ext.rotateRobot = function (robotRotate, degrees) {
+        if(robotRotate == menus[lang].robotRotation[0]) {
+            // Left
+            setMotor('A', 'Counter-Clockwise', 85);
+            setMotor('B', 'Counter-Clockwise', 85);
+            
+        } else {
+            // Right
+            setMotor('A', 'Clockwise', 85);
+            setMotor('B', 'Clockwise', 85);
+        }
+        // Calculate the time of the given degrees
+        // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
+        var deltaTime = (degrees % 360.0) * 2200 / 90;
+        setTimeout(function() {
+            setMotor('A', 'Clockwise', 0);
+            setMotor('B', 'Clockwise', 0);
+        }, deltaTime)
     };
 
     ext.setMotor = function (motorId, dir, pwm) {
@@ -782,7 +763,7 @@
             // Algobrain Blocks :
             [' ', 'Move Motor %m.motorSelect %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
-            [' ', 'Rotate Robot %m.robotRotate at %n degrees', 'rotateRobot', 'Left', 90],
+            [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
             // Ends Here
@@ -809,14 +790,14 @@
             ledColor: ['Red', 'Green', 'Blue'],
             // Move Robot
             robotDirection: ['Forward', 'Backward'],
-            robotRotate: ['Left', 'Right']
+            robotRotation: ['Left', 'Right']
             // Get Sensor
         }
         //
         // he: {
         //     // Move Motor
         //     motorSelect: ['A', 'B', 'C'],
-        //     motorDirection: ['כיוון השעון', 'נגד כיוון השעון'],
+        //     motorDirection: ['נגד', 'עם'],
         //     // LED's
         //     ledSelect: ['1', '2'],
         //     ledColor: ['אדום', 'ירוק', 'כחול'],

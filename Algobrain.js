@@ -254,6 +254,7 @@
                 for(var i = 1; i < sysexBytesRead; i++)
                     pulseInBuffer.push(storedInputData[i]);
                 console.log("FROM PULSE_IN_RESPONSE");
+                console.log(pulseInBuffer);
                 console.log(String.fromCharCode.apply(String, pulseInBuffer));
                 newPulseInResult = true;
                 break;
@@ -411,7 +412,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.0 - Setup Complete ");
+        console.log("Algobrain Version 1.1 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -776,13 +777,14 @@
     };
 
     ext.getSensor = function (sensorId) {
+        let mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
         let pulseTimeout = 4000;
         let cycleTime = 2000;
         let pwmValueH = 0;
         let dutyCycle = 0;
         let isInternalTimeout = false;
         newPulseInResult = false; // Reset the result flag
-        pulseIn(sensorId, HIGH, pulseTimeout);
+        pulseIn(mSensorId, HIGH, pulseTimeout);
         setTimeout(function() {
             console.log("timeoutFunction Yo!");
             isInternalTimeout = true;
@@ -800,7 +802,7 @@
         dutyCycle = parseInt(String.fromCharCode.apply(String, pulseInBuffer));
         if (pwmValueH != 0)
             dutyCycle = (float(pwmValueH) / float(cycleTime)) * 100.0;
-        else if (digitalRead(sensorId))
+        else if (digitalRead(mSensorId))
             dutyCycle = 100;
         console.log("getSensor Value: " + round(dutyCycle / 10));
         return round(dutyCycle / 10);

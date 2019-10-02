@@ -681,41 +681,41 @@
     ext.moveRobot = function (robotDir, numSteps) {
         if(robotDir == menus[lang].robotDirection[0]) {
             // Forward
-            setMotor('A', 'Counter-Clockwise', 170);
-            setMotor('B', 'Clockwise', 170);
+            ext.setMotor('A', 'Counter-Clockwise', 170);
+            ext.setMotor('B', 'Clockwise', 170);
             
         } else {
             // Backwards
-            setMotor('A', 'Clockwise', 170);
-            setMotor('B', 'Counter-Clockwise', 170);
+            ext.setMotor('A', 'Clockwise', 170);
+            ext.setMotor('B', 'Counter-Clockwise', 170);
         }
         switch(numSteps) {
             case 0:
-                setMotor('A', 'Clockwise', 0);
-                setMotor('B', 'Clockwise', 0);
+                ext.setMotor('A', 'Clockwise', 0);
+                ext.setMotor('B', 'Clockwise', 0);
                 break;
             case 1:
                 setTimeout(function() {
-                    setMotor('A', 'Clockwise', 0);
-                    setMotor('B', 'Clockwise', 0);
+                    ext.setMotor('A', 'Clockwise', 0);
+                    ext.setMotor('B', 'Clockwise', 0);
                 }, 1400)
                 break;
             case 2:
                     setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
+                        ext.setMotor('A', 'Clockwise', 0);
+                        ext.setMotor('B', 'Clockwise', 0);
                     }, 2750)
                     break;
             case 3:
                     setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
+                        ext.setMotor('A', 'Clockwise', 0);
+                        ext.setMotor('B', 'Clockwise', 0);
                     }, 4100)
                     break;
             default:
                     setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
+                        ext.setMotor('A', 'Clockwise', 0);
+                        ext.setMotor('B', 'Clockwise', 0);
                     }, 1500 * numSteps)
                     break;
         }
@@ -724,20 +724,20 @@
     ext.rotateRobot = function (robotRotate, degrees) {
         if(robotRotate == menus[lang].robotRotation[0]) {
             // Left
-            setMotor('A', 'Counter-Clockwise', 85);
-            setMotor('B', 'Counter-Clockwise', 85);
+            ext.setMotor('A', 'Counter-Clockwise', 85);
+            ext.setMotor('B', 'Counter-Clockwise', 85);
             
         } else {
             // Right
-            setMotor('A', 'Clockwise', 85);
-            setMotor('B', 'Clockwise', 85);
+            ext.setMotor('A', 'Clockwise', 85);
+            ext.setMotor('B', 'Clockwise', 85);
         }
         // Calculate the time of the given degrees
         // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
         var deltaTime = (degrees % 360.0) * 2200 / 90;
         setTimeout(function() {
-            setMotor('A', 'Clockwise', 0);
-            setMotor('B', 'Clockwise', 0);
+            ext.setMotor('A', 'Clockwise', 0);
+            ext.setMotor('B', 'Clockwise', 0);
         }, deltaTime)
     };
 

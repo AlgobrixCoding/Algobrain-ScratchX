@@ -43,8 +43,6 @@
 #define MINIMUM_SAMPLING_INTERVAL   1
 
 /* NEOPIXELS */
-//#include <Adafruit_GFX.h>
-//#include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
 #define NEOPIXEL 0x72
 #define NEOMATRIX 0x73
@@ -53,7 +51,6 @@
 #define MAX_NEO 1
 
 Adafruit_NeoPixel *neopixels = NULL;
-//Adafruit_NeoMatrix *neomatrix = NULL;
 
 /*==============================================================================
  * GLOBAL VARIABLES

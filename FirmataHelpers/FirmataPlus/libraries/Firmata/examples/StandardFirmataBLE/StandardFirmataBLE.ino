@@ -3,8 +3,8 @@
   from software on a host computer. It is intended to work with
   any host computer software package.
 
-  To download a host software package, please click on the following link
-  to open the list of Firmata client libraries in your default browser.
+  To download a host software package, please clink on the following link
+  to open the list of Firmata client libraries your default browser.
 
   https://github.com/firmata/arduino#firmata-client-libraries
 
@@ -20,20 +20,32 @@
 
   See file LICENSE.txt for further informations on licensing terms.
 
-  Last updated August 17th, 2017
+  Last updated June 15th, 2016
 */
 
 #include <Servo.h>
 #include <Wire.h>
 #include <Firmata.h>
 
-#define I2C_WRITE                   B00000000
-#define I2C_READ                    B00001000
-#define I2C_READ_CONTINUOUSLY       B00010000
-#define I2C_STOP_READING            B00011000
-#define I2C_READ_WRITE_MODE_MASK    B00011000
-#define I2C_10BIT_ADDRESS_MODE_MASK B00100000
-#define I2C_END_TX_MASK             B01000000
+//#define SERIAL_DEBUG
+#include "utility/firmataDebug.h"
+
+/*
+ * Uncomment the following include to enable interfacing
+ * with Serial devices via hardware or software serial.
+ */
+//#include "utility/SerialFirmata.h"
+
+// follow the instructions in bleConfig.h to configure your BLE hardware
+#include "bleConfig.h"
+
+#define I2C_WRITE                   0x00 //B00000000
+#define I2C_READ                    0x08 //B00001000
+#define I2C_READ_CONTINUOUSLY       0x10 //B00010000
+#define I2C_STOP_READING            0x18 //B00011000
+#define I2C_READ_WRITE_MODE_MASK    0x18 //B00011000
+#define I2C_10BIT_ADDRESS_MODE_MASK 0x20 //B00100000
+#define I2C_END_TX_MASK             0x40 //B01000000
 #define I2C_STOP_TX                 1
 #define I2C_RESTART_TX              0
 #define I2C_MAX_QUERIES             8
@@ -42,16 +54,9 @@
 // the minimum interval for sampling analog input
 #define MINIMUM_SAMPLING_INTERVAL   1
 
-/* NEOPIXELS */
-#include <Adafruit_NeoPixel.h>
-#define NEOPIXEL 0x72
-#define NEOPIXEL_REGISTER 0x73
-#define MAX_NEO 1
-
-Adafruit_NeoPixel *neopixels = NULL;
-
-#define PULSE_IN 0x74
-#define PULSE_IN_RESPONSE 0x75
+// min cannot be < 0x0006. Adjust max if necessary
+#define FIRMATA_BLE_MIN_INTERVAL    0x0006 // 7.5ms (7.5 / 1.25)
+#define FIRMATA_BLE_MAX_INTERVAL    0x0018 // 30ms (30 / 1.25)
 
 /*==============================================================================
  * GLOBAL VARIABLES
@@ -100,12 +105,6 @@ byte detachedServoCount = 0;
 byte servoCount = 0;
 
 boolean isResetting = false;
-
-// Forward declare a few functions to avoid compiler errors with older versions
-// of the Arduino IDE.
-void setPinModeCallback(byte, int);
-void reportAnalogCallback(byte analogPin, int value);
-void sysexCallback(byte, byte, byte*);
 
 /* utility functions */
 void wireWrite(byte data)
@@ -166,30 +165,6 @@ void detachServo(byte pin)
   }
 
   servoPinMap[pin] = 255;
-}
-
-void enableI2CPins()
-{
-  byte i;
-  // is there a faster way to do this? would probaby require importing
-  // Arduino.h to get SCL and SDA pins
-  for (i = 0; i < TOTAL_PINS; i++) {
-    if (IS_PIN_I2C(i)) {
-      // mark pins as i2c so they are ignore in non i2c data requests
-      setPinModeCallback(i, PIN_MODE_I2C);
-    }
-  }
-
-  isI2CEnabled = true;
-
-  Wire.begin();
-}
-
-/* disable the i2c pins so they can be used for other functions */
-void disableI2CPins() {
-  isI2CEnabled = false;
-  // disable read continuous mode for all devices
-  queryIndex = -1;
 }
 
 void readAndReportData(byte address, int theRegister, byte numBytes, byte stopTX) {
@@ -328,10 +303,7 @@ void setPinModeCallback(byte pin, int mode)
       break;
     case OUTPUT:
       if (IS_PIN_DIGITAL(pin)) {
-        if (Firmata.getPinMode(pin) == PIN_MODE_PWM) {
-          // Disable PWM if pin mode was previously set to PWM.
-          digitalWrite(PIN_TO_DIGITAL(pin), LOW);
-        }
+        digitalWrite(PIN_TO_DIGITAL(pin), LOW); // disable PWM
         pinMode(PIN_TO_DIGITAL(pin), OUTPUT);
         Firmata.setPinMode(pin, OUTPUT);
       }
@@ -596,7 +568,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
     case I2C_CONFIG:
       delayTime = (argv[0] + (argv[1] << 7));
 
-      if (argc > 1 && delayTime > 0) {
+      if (delayTime > 0) {
         i2cReadDelayTime = delayTime;
       }
 
@@ -657,7 +629,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
         }
         if (IS_PIN_PWM(pin)) {
           Firmata.write(PIN_MODE_PWM);
-          Firmata.write(DEFAULT_PWM_RESOLUTION);
+          Firmata.write(8); // 8 = 8-bit resolution
         }
         if (IS_PIN_DIGITAL(pin)) {
           Firmata.write(PIN_MODE_SERVO);
@@ -703,46 +675,31 @@ void sysexCallback(byte command, byte argc, byte *argv)
       serialFeature.handleSysex(command, argc, argv);
 #endif
       break;
-    case NEOPIXEL_REGISTER:
-      {
-        int pin = argv[0];
-        int count = argv[1];
-        
-        if (neopixels != NULL) {
-          delete neopixels;
-        }
-        neopixels = new Adafruit_NeoPixel(count, pin, NEO_GRB + NEO_KHZ800);
-        neopixels->begin();
-      }
-      break;
-    case NEOPIXEL:
-      {
-        int index = argv[0];
-        int red = argv[1];
-        int green = argv[2];
-        int blue = argv[3];
-        neopixels->setPixelColor(index, neopixels->Color(red, green, blue));
-        neopixels->show();
-      }
-      break;
-    case PULSE_IN:
-      {
-        int pin = argv[0];
-        int value = argv[1];
-        unsigned long timeout= argv[2];
-        String result = String(pulseIn(pin, value, timeout));
-        uint8_t msgLength = result.length() + 1;
-        Firmata.write(START_SYSEX);
-        Firmata.write(PULSE_IN_RESPONSE);
-        byte resultBytes[msgLength];
-        result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
-        for (byte i = 0; i < msgLength; i++) {
-          Firmata.write(resultBytes[i]);
-        }
-        Firmata.write(END_SYSEX);
-      }
-      break;
   }
+}
+
+void enableI2CPins()
+{
+  byte i;
+  // is there a faster way to do this? would probaby require importing
+  // Arduino.h to get SCL and SDA pins
+  for (i = 0; i < TOTAL_PINS; i++) {
+    if (IS_PIN_I2C(i)) {
+      // mark pins as i2c so they are ignore in non i2c data requests
+      setPinModeCallback(i, PIN_MODE_I2C);
+    }
+  }
+
+  isI2CEnabled = true;
+
+  Wire.begin();
+}
+
+/* disable the i2c pins so they can be used for other functions */
+void disableI2CPins() {
+  isI2CEnabled = false;
+  // disable read continuous mode for all devices
+  queryIndex = -1;
 }
 
 /*==============================================================================
@@ -752,9 +709,6 @@ void sysexCallback(byte command, byte argc, byte *argv)
 void systemResetCallback()
 {
   isResetting = true;
-
-  // initialize a defalt state
-  // TODO: option to load config from EEPROM instead of default
 
 #ifdef FIRMATA_SERIAL_FEATURE
   serialFeature.reset();
@@ -789,20 +743,13 @@ void systemResetCallback()
   detachedServoCount = 0;
   servoCount = 0;
 
-  /* send digital inputs to set the initial state on the host computer,
-   * since once in the loop(), this firmware will only send on change */
-  /*
-  TODO: this can never execute, since no pins default to digital input
-        but it will be needed when/if we support EEPROM stored config
-  for (byte i=0; i < TOTAL_PORTS; i++) {
-    outputPort(i, readPort(i, portConfigInputs[i]), true);
-  }
-  */
   isResetting = false;
 }
 
 void setup()
 {
+  DEBUG_BEGIN(9600);
+
   Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
 
   Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
@@ -814,16 +761,23 @@ void setup()
   Firmata.attach(START_SYSEX, sysexCallback);
   Firmata.attach(SYSTEM_RESET, systemResetCallback);
 
-  // to use a port other than Serial, such as Serial1 on an Arduino Leonardo or Mega,
-  // Call begin(baud) on the alternate serial port and pass it to Firmata to begin like this:
-  // Serial1.begin(57600);
-  // Firmata.begin(Serial1);
-  // However do not do this if you are using SERIAL_MESSAGE
+  stream.setLocalName(FIRMATA_BLE_LOCAL_NAME);
 
-  Firmata.begin(57600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for ATmega32u4-based boards and Arduino 101
+  // set the BLE connection interval - this is the fastest interval you can read inputs
+  stream.setConnectionInterval(FIRMATA_BLE_MIN_INTERVAL, FIRMATA_BLE_MAX_INTERVAL);
+  // set how often the BLE TX buffer is flushed (if not full)
+  stream.setFlushInterval(FIRMATA_BLE_MAX_INTERVAL);
+
+#ifdef BLE_REQ
+  for (byte i = 0; i < TOTAL_PINS; i++) {
+    if (IS_IGNORE_BLE_PINS(i)) {
+      Firmata.setPinMode(i, PIN_MODE_IGNORE);
+    }
   }
+#endif
+
+  stream.begin();
+  Firmata.begin(stream);
 
   systemResetCallback();  // reset to default config
 }
@@ -835,8 +789,12 @@ void loop()
 {
   byte pin, analogPin;
 
+  // do not process data if no BLE connection is established
+  // poll will send the TX buffer at the specified flush interval or when the buffer is full
+  if (!stream.poll()) return;
+
   /* DIGITALREAD - as fast as possible, check for changes and output them to the
-   * FTDI buffer using Serial.print()  */
+   * Stream buffer using Stream.write()  */
   checkDigitalInputs();
 
   /* STREAMREAD - processing incoming messagse as soon as possible, while still
@@ -844,11 +802,9 @@ void loop()
   while (Firmata.available())
     Firmata.processInput();
 
-  // TODO - ensure that Stream buffer doesn't go over 60 bytes
-
   currentMillis = millis();
   if (currentMillis - previousMillis > samplingInterval) {
-    previousMillis += samplingInterval;
+    previousMillis = currentMillis;
     /* ANALOGREAD - do all analogReads() at the configured sampling interval */
     for (pin = 0; pin < TOTAL_PINS; pin++) {
       if (IS_PIN_ANALOG(pin) && Firmata.getPinMode(pin) == PIN_MODE_ANALOG) {

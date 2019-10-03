@@ -257,6 +257,8 @@
                 console.log(pulseInBuffer);
                 console.log(String.fromCharCode.apply(String, pulseInBuffer));
                 newPulseInResult = true;
+                console.log("newPulseInResult: ");
+                console.log(newPulseInResult);
                 break;
         }
     }
@@ -412,7 +414,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.1 - Setup Complete ");
+        console.log("Algobrain Version 1.2 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -681,7 +683,7 @@
     };
 
     // Algobrain ext Functions (ScratchX Blocks) :
-    ext.setNeopixel = function(ledSelect, color) {
+    ext.setNeopixelColor = function(ledSelect, color) {
         if (ledSelect == '1') {
             registerNeopixel(Led_A_Pin, 1);
         } else {
@@ -789,20 +791,14 @@
             console.log("timeoutFunction Yo!");
             isInternalTimeout = true;
         }, 1000);
-        // while(true) {
-        //     if(isInternalTimeout || newPulseInResult) {
-        //         console.log(isInternalTimeout);
-        //         console.log(newPulseInResult);
-        //         break;
-        //     }
-        // } // Wait for the result buffer
+        while((isInternalTimeout == false) && (newPulseInResult == false)) { } // Wait for the result buffer
         console.log("FROM getSensor");
         console.log(String.fromCharCode.apply(String, pulseInBuffer));
         console.log(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
         dutyCycle = parseInt(String.fromCharCode.apply(String, pulseInBuffer));
         if (pwmValueH != 0)
-            dutyCycle = (float(pwmValueH) / float(cycleTime)) * 100.0;
-        else if (digitalRead(mSensorId))
+            dutyCycle = (pwmValueH / cycleTime) * 100.0;
+        else if (analogRead(mSensorId) > 0)
             dutyCycle = 100;
         console.log("getSensor Value: " + round(dutyCycle / 10));
         return round(dutyCycle / 10);
@@ -825,8 +821,8 @@
             [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
             [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
             [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
-            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
-            [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0],
+            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setNeopixelColor', '1', 'Red'],
+            [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setNeopixel', '1', 0, 0, 0],
             ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
             // Ends Here
         ]

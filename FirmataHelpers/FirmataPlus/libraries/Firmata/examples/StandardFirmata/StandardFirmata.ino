@@ -3,8 +3,8 @@
   from software on a host computer. It is intended to work with
   any host computer software package.
 
-  To download a host software package, please click on the following link
-  to open the list of Firmata client libraries in your default browser.
+  To download a host software package, please clink on the following link
+  to open the list of Firmata client libraries your default browser.
 
   https://github.com/firmata/arduino#firmata-client-libraries
 
@@ -20,7 +20,7 @@
 
   See file LICENSE.txt for further informations on licensing terms.
 
-  Last updated August 17th, 2017
+  Last updated by Jeff Hoefs: January 10th, 2016
 */
 
 #include <Servo.h>
@@ -42,16 +42,6 @@
 // the minimum interval for sampling analog input
 #define MINIMUM_SAMPLING_INTERVAL   1
 
-/* NEOPIXELS */
-#include <Adafruit_NeoPixel.h>
-#define NEOPIXEL 0x72
-#define NEOPIXEL_REGISTER 0x73
-#define MAX_NEO 1
-
-Adafruit_NeoPixel *neopixels = NULL;
-
-#define PULSE_IN 0x74
-#define PULSE_IN_RESPONSE 0x75
 
 /*==============================================================================
  * GLOBAL VARIABLES
@@ -101,11 +91,6 @@ byte servoCount = 0;
 
 boolean isResetting = false;
 
-// Forward declare a few functions to avoid compiler errors with older versions
-// of the Arduino IDE.
-void setPinModeCallback(byte, int);
-void reportAnalogCallback(byte analogPin, int value);
-void sysexCallback(byte, byte, byte*);
 
 /* utility functions */
 void wireWrite(byte data)
@@ -166,30 +151,6 @@ void detachServo(byte pin)
   }
 
   servoPinMap[pin] = 255;
-}
-
-void enableI2CPins()
-{
-  byte i;
-  // is there a faster way to do this? would probaby require importing
-  // Arduino.h to get SCL and SDA pins
-  for (i = 0; i < TOTAL_PINS; i++) {
-    if (IS_PIN_I2C(i)) {
-      // mark pins as i2c so they are ignore in non i2c data requests
-      setPinModeCallback(i, PIN_MODE_I2C);
-    }
-  }
-
-  isI2CEnabled = true;
-
-  Wire.begin();
-}
-
-/* disable the i2c pins so they can be used for other functions */
-void disableI2CPins() {
-  isI2CEnabled = false;
-  // disable read continuous mode for all devices
-  queryIndex = -1;
 }
 
 void readAndReportData(byte address, int theRegister, byte numBytes, byte stopTX) {
@@ -328,10 +289,7 @@ void setPinModeCallback(byte pin, int mode)
       break;
     case OUTPUT:
       if (IS_PIN_DIGITAL(pin)) {
-        if (Firmata.getPinMode(pin) == PIN_MODE_PWM) {
-          // Disable PWM if pin mode was previously set to PWM.
-          digitalWrite(PIN_TO_DIGITAL(pin), LOW);
-        }
+        digitalWrite(PIN_TO_DIGITAL(pin), LOW); // disable PWM
         pinMode(PIN_TO_DIGITAL(pin), OUTPUT);
         Firmata.setPinMode(pin, OUTPUT);
       }
@@ -596,7 +554,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
     case I2C_CONFIG:
       delayTime = (argv[0] + (argv[1] << 7));
 
-      if (argc > 1 && delayTime > 0) {
+      if (delayTime > 0) {
         i2cReadDelayTime = delayTime;
       }
 
@@ -703,46 +661,31 @@ void sysexCallback(byte command, byte argc, byte *argv)
       serialFeature.handleSysex(command, argc, argv);
 #endif
       break;
-    case NEOPIXEL_REGISTER:
-      {
-        int pin = argv[0];
-        int count = argv[1];
-        
-        if (neopixels != NULL) {
-          delete neopixels;
-        }
-        neopixels = new Adafruit_NeoPixel(count, pin, NEO_GRB + NEO_KHZ800);
-        neopixels->begin();
-      }
-      break;
-    case NEOPIXEL:
-      {
-        int index = argv[0];
-        int red = argv[1];
-        int green = argv[2];
-        int blue = argv[3];
-        neopixels->setPixelColor(index, neopixels->Color(red, green, blue));
-        neopixels->show();
-      }
-      break;
-    case PULSE_IN:
-      {
-        int pin = argv[0];
-        int value = argv[1];
-        unsigned long timeout= argv[2];
-        String result = String(pulseIn(pin, value, timeout));
-        uint8_t msgLength = result.length() + 1;
-        Firmata.write(START_SYSEX);
-        Firmata.write(PULSE_IN_RESPONSE);
-        byte resultBytes[msgLength];
-        result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
-        for (byte i = 0; i < msgLength; i++) {
-          Firmata.write(resultBytes[i]);
-        }
-        Firmata.write(END_SYSEX);
-      }
-      break;
   }
+}
+
+void enableI2CPins()
+{
+  byte i;
+  // is there a faster way to do this? would probaby require importing
+  // Arduino.h to get SCL and SDA pins
+  for (i = 0; i < TOTAL_PINS; i++) {
+    if (IS_PIN_I2C(i)) {
+      // mark pins as i2c so they are ignore in non i2c data requests
+      setPinModeCallback(i, PIN_MODE_I2C);
+    }
+  }
+
+  isI2CEnabled = true;
+
+  Wire.begin();
+}
+
+/* disable the i2c pins so they can be used for other functions */
+void disableI2CPins() {
+  isI2CEnabled = false;
+  // disable read continuous mode for all devices
+  queryIndex = -1;
 }
 
 /*==============================================================================

@@ -253,12 +253,8 @@
                 pulseInBuffer.length = 0; // Clear the buffer
                 for(var i = 1; i < sysexBytesRead; i++)
                     pulseInBuffer.push(storedInputData[i]);
-                console.log("FROM PULSE_IN_RESPONSE");
-                console.log(pulseInBuffer);
-                console.log(String.fromCharCode.apply(String, pulseInBuffer));
+                console.log("FROM PULSE_IN_RESPONSE: " + String.fromCharCode.apply(String, pulseInBuffer));
                 newPulseInResult = true;
-                console.log("newPulseInResult: ");
-                console.log(newPulseInResult);
                 break;
         }
     }
@@ -414,7 +410,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.4 - Setup Complete ");
+        console.log("Algobrain Version 1.5 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -778,7 +774,7 @@
         setMotor(motorId, dir, pwm);
     };
 
-    ext.getSensor = function (sensorId, getSensor) {
+    ext.getSensor = function (sensorId) {
         var mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
         var pulseInTimeout = 4000;
         var cycleTime = 2000;
@@ -830,7 +826,7 @@
             [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setNeopixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setNeopixel', '1', 0, 0, 0],
-            ['R', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
+            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
             // Ends Here
         ]
         // Still working on hebrew

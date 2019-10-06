@@ -2,7 +2,7 @@
 
 ## *Table of contents*
 - [Introduction](https://github.com/AlgobrixCoding/Algobrain-ScratchX#introduction)
-- [Prerequisites](https://github.com/AlgobrixCoding/Algobrain-ScratchX#prerequisites)
+- [Prerequisites](https://github.com/AlgobrixCoding/Algobrain-ScratchX#prerequisites--dependencies)
 - [Installation](https://github.com/AlgobrixCoding/Algobrain-ScratchX#installation)
 
 ## *Introduction*

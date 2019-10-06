@@ -410,7 +410,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.6 - Setup Complete ");
+        console.log("Algobrain Version 1.7 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -486,10 +486,10 @@
         >> pulseIn / pulseOut(0x74)
         >> pin(0-127)
         >> value(1 or 0, HIGH or LOW)
-        >> pulseDuration MS Byte
-        >> pulseDuration
-        >> pulseDuration
         >> pulseDuration LS Byte
+        >> pulseDuration
+        >> pulseDuration
+        >> pulseDuration MS Byte
         >> pulseTimeout 0
         >> pulseTimeout 1
         >> pulseTimeout 2
@@ -542,6 +542,7 @@
         }
         console.log("byteArray: ");
         console.log(byteArray);
+        console.log(byteArrayToLong(byteArray));
         return byteArray;
     };
     

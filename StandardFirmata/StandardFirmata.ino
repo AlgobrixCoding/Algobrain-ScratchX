@@ -729,11 +729,11 @@ void sysexCallback(byte command, byte argc, byte *argv)
     {
       int pin = argv[0];
       int value = argv[1];
-      byte pulseDurationArray[4] = {argv[2], argv[3], argv[4], argv[5]};
-      unsigned long pulseDuration = ((unsigned long)pulseDurationArray[0] << 24)
-              + ((unsigned long)pulseDurationArray[1] << 16)
-              + ((unsigned long)pulseDurationArray[2] << 8)
-              + ((unsigned long)pulseDurationArray[3]);
+      byte pulseDurationArray[4] = {argv[2], argv[3], argv[4], argv[5]}; // [LSB , ###, ###, MSB]
+      unsigned long pulseDuration = ((unsigned long)pulseDurationArray[0])
+                                  + ((unsigned long)pulseDurationArray[1] << 8)
+                                  + ((unsigned long)pulseDurationArray[2] << 16)
+                                  + ((unsigned long)pulseDurationArray[3] << 24);
       if(value == HIGH) {
         pinMode(argv[0], OUTPUT);
         digitalWrite(pin, LOW);
@@ -748,28 +748,30 @@ void sysexCallback(byte command, byte argc, byte *argv)
         delayMicroseconds(pulseDuration);
         digitalWrite(pin, HIGH);
       }
-      unsigned long duration;
-      byte responseArray[4];
-      byte timeoutArray[4] = {argv[6], argv[7], argv[8], argv[9]};
-      unsigned long timeout = ((unsigned long)timeoutArray[0] << 24)
-                + ((unsigned long)timeoutArray[1] << 16)
-                + ((unsigned long)timeoutArray[2] << 8)
-                + ((unsigned long)timeoutArray[3]);
+      byte timeoutArray[4] = {argv[6], argv[7], argv[8], argv[9]}; // [LSB , ###, ###, MSB]
+      unsigned long timeout = ((unsigned long)timeoutArray[0])
+                            + ((unsigned long)timeoutArray[1] << 8)
+                            + ((unsigned long)timeoutArray[2] << 16)
+                            + ((unsigned long)timeoutArray[3] << 24);
       pinMode(pin, INPUT);
-      duration = pulseIn(pin, value, timeout);
-      responseArray[0] = (((unsigned long)duration >> 24) & 0xFF);
-      responseArray[1] = (((unsigned long)duration >> 16) & 0xFF);
-      responseArray[2] = (((unsigned long)duration >> 8) & 0xFF);
-      responseArray[3] = (((unsigned long)duration & 0xFF));
-      Firmata.sendSysex(PULSE_IN_RESPONSE, 4, responseArray);
+      String result = String(pulseIn(pin, value, timeout));
+      uint8_t msgLength = result.length() + 1;
+      Firmata.write(START_SYSEX);
+      Firmata.write(PULSE_IN_RESPONSE);
+      byte resultBytes[msgLength];
+      result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
+      for (byte i = 0; i < msgLength; i++) {
+        Firmata.write(resultBytes[i]);
+      }
+      Firmata.write(END_SYSEX);
     }
     break;
-    case PULSE_IN_OLD:
-      {
-        int pin = argv[0];
-        int value = argv[1];
-        unsigned long timeout = argv[2];
-        
+//    case PULSE_IN:
+//      {
+//        int pin = argv[0];
+//        int value = argv[1];
+//        unsigned long timeout = argv[2];
+//        
         String result = String(pulseIn(pin, value, timeout));
         uint8_t msgLength = result.length() + 1;
         Firmata.write(START_SYSEX);
@@ -780,8 +782,8 @@ void sysexCallback(byte command, byte argc, byte *argv)
           Firmata.write(resultBytes[i]);
         }
         Firmata.write(END_SYSEX);
-      }
-      break;
+//      }
+//      break;
   }
 }
 

@@ -74,7 +74,7 @@ byte portConfigInputs[TOTAL_PORTS]; // each bit: 1 = pin in INPUT, 0 = anything 
 /* timer variables */
 unsigned long currentMillis;        // store the current value from millis()
 unsigned long previousMillis;       // for comparison with currentMillis
-unsigned int samplingInterval = 19; // how often to run the main loop (in ms)
+unsigned int samplingInterval = 1; // how often to run the main loop (in ms)
 
 /* i2c data */
 struct i2c_device_info {
@@ -726,10 +726,50 @@ void sysexCallback(byte command, byte argc, byte *argv)
       }
       break;
     case PULSE_IN:
+    {
+      int pin = argv[0];
+      int value = argv[1];
+      byte pulseDurationArray[4] = {argv[2], argv[3], argv[4], argv[5]};
+      unsigned long pulseDuration = ((unsigned long)pulseDurationArray[0] << 24)
+              + ((unsigned long)pulseDurationArray[1] << 16)
+              + ((unsigned long)pulseDurationArray[2] << 8)
+              + ((unsigned long)pulseDurationArray[3]);
+      if(value == HIGH) {
+        pinMode(argv[0], OUTPUT);
+        digitalWrite(pin, LOW);
+        delayMicroseconds(2);
+        digitalWrite(pin, HIGH);
+        delayMicroseconds(pulseDuration);
+        digitalWrite(pin, LOW);
+      } else {
+        digitalWrite(pin, HIGH);
+        delayMicroseconds(2);
+        digitalWrite(pin, LOW);
+        delayMicroseconds(pulseDuration);
+        digitalWrite(pin, HIGH);
+      }
+      unsigned long duration;
+      byte responseArray[4];
+      byte timeoutArray[4] = {argv[6], argv[7], argv[8], argv[9]};
+      unsigned long timeout = ((unsigned long)timeoutArray[0] << 24)
+                + ((unsigned long)timeoutArray[1] << 16)
+                + ((unsigned long)timeoutArray[2] << 8)
+                + ((unsigned long)timeoutArray[3]);
+      pinMode(pin, INPUT);
+      duration = pulseIn(pin, value, timeout);
+      responseArray[0] = (((unsigned long)duration >> 24) & 0xFF);
+      responseArray[1] = (((unsigned long)duration >> 16) & 0xFF);
+      responseArray[2] = (((unsigned long)duration >> 8) & 0xFF);
+      responseArray[3] = (((unsigned long)duration & 0xFF));
+      Firmata.sendSysex(PULSE_IN_RESPONSE, 4, responseArray);
+    }
+    break;
+    case PULSE_IN_OLD:
       {
         int pin = argv[0];
         int value = argv[1];
-        unsigned long timeout= argv[2];
+        unsigned long timeout = argv[2];
+        
         String result = String(pulseIn(pin, value, timeout));
         uint8_t msgLength = result.length() + 1;
         Firmata.write(START_SYSEX);

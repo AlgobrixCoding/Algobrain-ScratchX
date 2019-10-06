@@ -410,7 +410,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.5 - Setup Complete ");
+        console.log("Algobrain Version 1.6 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -478,17 +478,80 @@
         device.send(msg.buffer);
     }
 
-    function pulseIn(pin, value, timeout) {
+    function pulseIn(pin, value, pulseDuration, timeout) {
+        /*
+        >> The protocol is as follows:
+        >> To Request a Pulse In
+        >> START_SYSEX(0xF0)
+        >> pulseIn / pulseOut(0x74)
+        >> pin(0-127)
+        >> value(1 or 0, HIGH or LOW)
+        >> pulseDuration MS Byte
+        >> pulseDuration
+        >> pulseDuration
+        >> pulseDuration LS Byte
+        >> pulseTimeout 0
+        >> pulseTimeout 1
+        >> pulseTimeout 2
+        >> pulseTimeout 3
+        >> END_SYSEX(0xF7)
+
+        >> pulseDuration : 4 byte long value that specifies that amount of time to do the pulseIn \ pulseOut.
+        >> pulseTimeout : 4 byte long value passed to the pulseIn function as timeout.
+        */
+        var pulseDurationByteArray = longToByteArray(pulseDuration);
+        var timeoutByteArray = longToByteArray(timeout);
         var msg = new Uint8Array([
             START_SYSEX,
             PULSE_IN,
             pin,
             value,
-            timeout,
+            pulseDurationByteArray[0],
+            pulseDurationByteArray[1],
+            pulseDurationByteArray[2],
+            pulseDurationByteArray[3],
+            timeoutByteArray[0],
+            timeoutByteArray[1],
+            timeoutByteArray[2],
+            timeoutByteArray[3],
             END_SYSEX
         ]);
         device.send(msg.buffer);
+        /*
+        >> After the request you get the following response:
+        >> START_SYSEX(0xF0)
+        >> pulseIn/pulseOut Response(0x75)
+        >> duration MSB
+        >> duration
+        >> duration
+        >> duration LSB
+        >> END_SYSEX(0xF7)
+
+        >> duration : 4 byte long value of the returned pulse duration from pulseIn
+        */
     }
+
+    function longToByteArray(long) {
+        // we want to represent the input as a 8-bytes array
+        var byteArray = [0, 0, 0, 0];
+
+        for ( var index = 0; index < byteArray.length; index ++ ) {
+            var byte = long & 0xff;
+            byteArray [ index ] = byte;
+            long = (long - byte) / 256;
+        }
+        console.log("byteArray: ");
+        console.log(byteArray);
+        return byteArray;
+    };
+    
+    function byteArrayToLong(byteArray) {
+        var value = 0;
+        for ( var i = byteArray.length - 1; i >= 0; i--) {
+            value = (value * 256) + byteArray[i] * 1;
+        }
+        return value;
+    };
 
     // Ends here.
 
@@ -776,35 +839,36 @@
 
     ext.getSensor = function (sensorId) {
         var mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
-        var pulseInTimeout = 4000;
-        var cycleTime = 2000;
-        var pwmValueH = 0;
-        var dutyCycle = 0;
+        var pulseTimeout = 4000; // 4000 us --> 4 ms (0FA0)
+        var cycleTime = 2000; // 2000 us --> 2 ms (07D0)
         var isInternalTimeout = false;
         newPulseInResult = false; // Reset the result flag
         
         setTimeout(function() {
             isInternalTimeout = true;
-        }, 1500);
+        }, 100); // 100 ms timeout
 
-        pulseIn(mSensorId, HIGH, pulseInTimeout);
+        pulseIn(mSensorId, HIGH, cycleTime, pulseTimeout);
         
         wait(getSensor);
         function wait() {
             if(isInternalTimeout || newPulseInResult) {
+                console.log("wait(): " + String.fromCharCode.apply(String, pulseInBuffer));
                 return getSensor(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
             }
             setTimeout(wait, 0);
         }
 
-        function getSensor(dutyCycle) {
+        function getSensor(pwmValueH) {
+            var dutyCycle = 0;
             if (pwmValueH != 0)
                 dutyCycle = (pwmValueH / cycleTime) * 100.0;
             else if (digitalRead(mSensorId) > 0)
                 dutyCycle = 100;
+            console.log("dutyCycle Value: " + dutyCycle / 10);
             console.log("getSensor Value: " + Math.floor(dutyCycle / 10));
             return Math.floor(dutyCycle / 10);
-        }       
+        }
     };
     // Ends Here.
 

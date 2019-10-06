@@ -414,7 +414,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.2 - Setup Complete ");
+        console.log("Algobrain Version 1.3 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -778,30 +778,32 @@
         setMotor(motorId, dir, pwm);
     };
 
-    ext.getSensor = function (sensorId) {
-        let mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
-        let pulseTimeout = 4000;
-        let cycleTime = 2000;
-        let pwmValueH = 0;
-        let dutyCycle = 0;
-        let isInternalTimeout = false;
+    ext.getSensor = function (sensorId, getSensor) {
+        var mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
+        var pulseInTimeout = 4000;
+        var cycleTime = 2000;
+        var pwmValueH = 0;
+        var dutyCycle = 0;
+        var isInternalTimeout = false;
         newPulseInResult = false; // Reset the result flag
-        pulseIn(mSensorId, HIGH, pulseTimeout);
-        setTimeout(function() {
-            console.log("timeoutFunction Yo!");
-            isInternalTimeout = true;
-        }, 1000);
-        while((isInternalTimeout == false) && (newPulseInResult == false)) { } // Wait for the result buffer
-        console.log("FROM getSensor");
-        console.log(String.fromCharCode.apply(String, pulseInBuffer));
-        console.log(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
-        dutyCycle = parseInt(String.fromCharCode.apply(String, pulseInBuffer));
-        if (pwmValueH != 0)
-            dutyCycle = (pwmValueH / cycleTime) * 100.0;
-        else if (analogRead(mSensorId) > 0)
-            dutyCycle = 100;
-        console.log("getSensor Value: " + round(dutyCycle / 10));
-        return round(dutyCycle / 10);
+        pulseIn(mSensorId, HIGH, pulseInTimeout);
+        
+        wait(getSensor);
+        function wait() {
+            if(isInternalTimeout || newPulseInResult) {
+                return getSensor(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
+            }
+            setTimeout(wait, 0);
+        }
+
+        function getSensor(dutyCycle) {
+            if (pwmValueH != 0)
+                dutyCycle = (pwmValueH / cycleTime) * 100.0;
+            else if (analogRead(mSensorId) > 0)
+                dutyCycle = 100;
+            console.log("getSensor Value: " + round(dutyCycle / 10));
+            return round(dutyCycle / 10);
+        }       
     };
     // Ends Here.
 
@@ -823,7 +825,7 @@
             [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setNeopixelColor', '1', 'Red'],
             [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setNeopixel', '1', 0, 0, 0],
-            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
+            ['R', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
             // Ends Here
         ]
         // Still working on hebrew

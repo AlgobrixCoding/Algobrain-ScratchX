@@ -414,7 +414,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.3 - Setup Complete ");
+        console.log("Algobrain Version 1.4 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -786,6 +786,11 @@
         var dutyCycle = 0;
         var isInternalTimeout = false;
         newPulseInResult = false; // Reset the result flag
+        
+        setTimeout(function() {
+            isInternalTimeout = true;
+        }, 1500);
+
         pulseIn(mSensorId, HIGH, pulseInTimeout);
         
         wait(getSensor);
@@ -799,10 +804,10 @@
         function getSensor(dutyCycle) {
             if (pwmValueH != 0)
                 dutyCycle = (pwmValueH / cycleTime) * 100.0;
-            else if (analogRead(mSensorId) > 0)
+            else if (digitalRead(mSensorId) > 0)
                 dutyCycle = 100;
-            console.log("getSensor Value: " + round(dutyCycle / 10));
-            return round(dutyCycle / 10);
+            console.log("getSensor Value: " + Math.floor(dutyCycle / 10));
+            return Math.floor(dutyCycle / 10);
         }       
     };
     // Ends Here.

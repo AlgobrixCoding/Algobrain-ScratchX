@@ -253,7 +253,9 @@
                 pulseInBuffer.length = 0; // Clear the buffer
                 for(var i = 1; i < sysexBytesRead; i++)
                     pulseInBuffer.push(storedInputData[i]);
-                console.log("FROM PULSE_IN_RESPONSE: " + String.fromCharCode.apply(String, pulseInBuffer));
+                // Debug :
+                // console.log("FROM PULSE_IN_RESPONSE: " + String.fromCharCode.apply(String, pulseInBuffer));
+                pulseInResult = parseInt(String.fromCharCode.apply(String, pulseInBuffer));
                 newPulseInResult = true;
                 break;
         }
@@ -410,13 +412,14 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 1.7 - Setup Complete ");
+        console.log("Algobrain Version 2.0 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
         setMotorSpeed(motorId, pwm);
         setMotorDir(motorId, dir);
-        console.log("Moving Motor ", motorId, " In ", dir, " Direction at ", pwm, " PWM");
+        // Debug :
+        // console.log("Moving Motor ", motorId, " In ", dir, " Direction at ", pwm, " PWM");
     }
     
     function setMotorSpeed(motorId, pwm) {
@@ -431,7 +434,6 @@
                 analogWrite(Motor_C_PWM_Pin, pwm);
                 break;
             default:
-                console.log("default switch at setMotorSpeed");
                 break;
         }
     }
@@ -486,10 +488,10 @@
         >> pulseIn / pulseOut(0x74)
         >> pin(0-127)
         >> value(1 or 0, HIGH or LOW)
-        >> pulseDuration LS Byte
-        >> pulseDuration
-        >> pulseDuration
-        >> pulseDuration MS Byte
+        >> pulseDuration 0 (LS Byte)
+        >> pulseDuration 1
+        >> pulseDuration 2
+        >> pulseDuration 3 (MS Byte)
         >> pulseTimeout 0
         >> pulseTimeout 1
         >> pulseTimeout 2
@@ -521,10 +523,7 @@
         >> After the request you get the following response:
         >> START_SYSEX(0xF0)
         >> pulseIn/pulseOut Response(0x75)
-        >> duration MSB
-        >> duration
-        >> duration
-        >> duration LSB
+        >> resultBytes[]
         >> END_SYSEX(0xF7)
 
         >> duration : 4 byte long value of the returned pulse duration from pulseIn
@@ -540,9 +539,10 @@
             byteArray [ index ] = byte;
             long = (long - byte) / 256;
         }
-        console.log("byteArray: ");
-        console.log(byteArray);
-        console.log(byteArrayToLong(byteArray));
+        // For debug.
+        // console.log("byteArray: ");
+        // console.log(byteArray);
+        // console.log(byteArrayToLong(byteArray));
         return byteArray;
     };
     
@@ -744,11 +744,8 @@
 
     // Algobrain ext Functions (ScratchX Blocks) :
     ext.setNeopixelColor = function(ledSelect, color) {
-        if (ledSelect == '1') {
-            registerNeopixel(Led_A_Pin, 1);
-        } else {
-            registerNeopixel(Led_B_Pin, 1);
-        }
+        var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
+        registerNeopixel(LedPin, 1);
         switch(color) {
             case menus[lang].ledColor[0]:
                 setNeopixel(0, 255, 0, 0);
@@ -763,11 +760,8 @@
     };
 
     ext.setNeopixel = function (ledSelect, red, green, blue) {
-        if (ledSelect == '1') {
-            registerNeopixel(Led_A_Pin, 1);
-        } else {
-            registerNeopixel(Led_B_Pin, 1);
-        }
+        var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
+        registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
     };
 
@@ -776,7 +770,6 @@
             // Forward
             setMotor('A', 'Counter-Clockwise', 170);
             setMotor('B', 'Clockwise', 170);
-            
         } else {
             // Backwards
             setMotor('A', 'Clockwise', 170);
@@ -815,22 +808,18 @@
     };
 
     ext.rotateRobot = function (robotRotate, degrees) {
-        if(robotRotate == menus[lang].robotRotation[0]) {
-            // Left
-            setMotor('A', 'Counter-Clockwise', 85);
-            setMotor('B', 'Counter-Clockwise', 85);
-            
-        } else {
-            // Right
-            setMotor('A', 'Clockwise', 85);
-            setMotor('B', 'Clockwise', 85);
-        }
+        // CW - Right , CCW - Left
+        var rotateDir = (robotRotate == menus[lang].robotRotation[0]) ? 'Counter-Clockwise' : 'Clockwise';
+        
+        setMotor('A', rotateDir, 85);
+        setMotor('B', rotateDir, 85);
+        
         // Calculate the time of the given degrees
         // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
         var deltaTime = (degrees % 360.0) * 2200 / 90;
         setTimeout(function() {
-            setMotor('A', 'Clockwise', 0);
-            setMotor('B', 'Clockwise', 0);
+            setMotor('A', rotateDir, 0);
+            setMotor('B', rotateDir, 0);
         }, deltaTime)
     };
 
@@ -851,15 +840,16 @@
 
         pulseIn(mSensorId, HIGH, cycleTime, pulseTimeout);
         
-        wait(getSensor);
+        wait();
         function wait() {
             if(isInternalTimeout || newPulseInResult) {
-                console.log("wait(): " + String.fromCharCode.apply(String, pulseInBuffer));
-                return getSensor(parseInt(String.fromCharCode.apply(String, pulseInBuffer)));
+                if(isInternalTimeout)
+                    return 0;
+                return getSensor(pulseInResult);
             }
             setTimeout(wait, 0);
         }
-
+        
         function getSensor(pwmValueH) {
             var dutyCycle = 0;
             if (pwmValueH != 0)
@@ -867,8 +857,8 @@
             else if (digitalRead(mSensorId) > 0)
                 dutyCycle = 100;
             console.log("dutyCycle Value: " + dutyCycle / 10);
-            console.log("getSensor Value: " + Math.floor(dutyCycle / 10));
-            return Math.floor(dutyCycle / 10);
+            console.log("getSensor Value: " + Math.round(dutyCycle / 10));
+            return Math.round(dutyCycle / 10);
         }
     };
     // Ends Here.

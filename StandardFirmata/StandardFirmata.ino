@@ -772,16 +772,16 @@ void sysexCallback(byte command, byte argc, byte *argv)
 //        int value = argv[1];
 //        unsigned long timeout = argv[2];
 //        
-        String result = String(pulseIn(pin, value, timeout));
-        uint8_t msgLength = result.length() + 1;
-        Firmata.write(START_SYSEX);
-        Firmata.write(PULSE_IN_RESPONSE);
-        byte resultBytes[msgLength];
-        result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
-        for (byte i = 0; i < msgLength; i++) {
-          Firmata.write(resultBytes[i]);
-        }
-        Firmata.write(END_SYSEX);
+//        String result = String(pulseIn(pin, value, timeout));
+//        uint8_t msgLength = result.length() + 1;
+//        Firmata.write(START_SYSEX);
+//        Firmata.write(PULSE_IN_RESPONSE);
+//        byte resultBytes[msgLength];
+//        result.getBytes(resultBytes, msgLength); // +1 for the trailing zero
+//        for (byte i = 0; i < msgLength; i++) {
+//          Firmata.write(resultBytes[i]);
+//        }
+//        Firmata.write(END_SYSEX);
 //      }
 //      break;
   }

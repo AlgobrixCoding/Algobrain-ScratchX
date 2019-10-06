@@ -25,4 +25,4 @@ After following all the prerequisites and dependecies installations...
 ![Neopixel](https://i.imgur.com/F80jUsA.png)
 - Connect the Algobrain with the **Micro USB**
 - Open **"StandardFirmata.ino"** (Arduino sketch) and upload it to the Algobrain.
-- Open the following link and wait for the Algobrain to connect : [ScratchX Site Algobrain Extension](https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js)
+- Open the following link **WITH IE11 Browser** and wait for the Algobrain to connect : [ScratchX Site Algobrain Extension](https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js)

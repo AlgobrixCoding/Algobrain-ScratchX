@@ -9,9 +9,9 @@
 This repo includes the ScartchX extension for working with the Algobrain, as well as the files and arduino sketch required for the board.
 
 ## *Prerequisites \ Dependencies*
-- [Purchase Algobrix's Algobrain Board](http://www.algobrix.com/)
-- [Arduino IDE 1.69+](https://www.arduino.cc)
-- [Arduino Algobrain Board Package](https://github.com/AlgobrixCoding/Algobrain-Board)
+- [First, if needed purchase Algobrix's Algobrain Board here](http://www.algobrix.com/)
+- [Download the Arduino IDE 1.69 or higher](https://www.arduino.cc)
+- [Follow the installation instructions for the Arduino Algobrain Board Package](https://github.com/AlgobrixCoding/Algobrain-Board)
 - [Adafruit_NeoPixel](https://github.com/adafruit/Adafruit_NeoPixel) Library Installed (Guide for installation is included below)
 - [Micro USB](https://www.amazon.com/s?k=Micro%20USB)
 

@@ -415,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.5 - Setup Complete ");
+        console.log("Algobrain Version 3.0 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -924,41 +924,38 @@
         // 'Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False'
 
         var mSensorValue;
-        waitSensor(callback);
-
-        function waitSensor(callback) {
-            var isLevelDetected = false;
-            ext.getSensor(sensorId);
-            mSensorValue = sensorValue;
-            console.log(mSensorValue);
-            switch (sensorLevel) {
-                case menus[lang].sensorLevels[0]: // Low
-                    isLevelDetected = (1 <= mSensorValue && mSensorValue <= 2);
-                    break;
-                case menus[lang].sensorLevels[1]: // Medium
-                    isLevelDetected = (3 <= mSensorValue && mSensorValue <= 5);
-                    break;
-                case menus[lang].sensorLevels[2]: // High
-                    isLevelDetected = (6 <= mSensorValue && mSensorValue <= 10);
-                    break;
-                case menus[lang].sensorLevels[3]: // Low-Medium
-                    isLevelDetected = (1 <= mSensorValue && mSensorValue <= 5);
-                    break;
-                case menus[lang].sensorLevels[4]: // Medium-High
-                    isLevelDetected = (3 <= mSensorValue && mSensorValue <= 10);
-                    break;
-                case menus[lang].sensorLevels[5]: // True
-                    isLevelDetected = (mSensorValue != 0);
-                    break;
-                case menus[lang].sensorLevels[6]: // False
-                    isLevelDetected = (mSensorValue == 0);
-                    break;  
-            }
-            if(isLevelDetected)
-                callback();
-            else
-                setTimeout(waitSensor, 50);
+        var isLevelDetected = false;
+        ext.getSensor(sensorId);
+        mSensorValue = sensorValue;
+        switch (sensorLevel) {
+            case menus[lang].sensorLevels[0]: // Low
+                isLevelDetected = (1 <= mSensorValue && mSensorValue <= 2);
+                break;
+            case menus[lang].sensorLevels[1]: // Medium
+                isLevelDetected = (3 <= mSensorValue && mSensorValue <= 5);
+                break;
+            case menus[lang].sensorLevels[2]: // High
+                isLevelDetected = (6 <= mSensorValue && mSensorValue <= 10);
+                break;
+            case menus[lang].sensorLevels[3]: // Low-Medium
+                isLevelDetected = (1 <= mSensorValue && mSensorValue <= 5);
+                break;
+            case menus[lang].sensorLevels[4]: // Medium-High
+                isLevelDetected = (3 <= mSensorValue && mSensorValue <= 10);
+                break;
+            case menus[lang].sensorLevels[5]: // True
+                isLevelDetected = (mSensorValue != 0);
+                break;
+            case menus[lang].sensorLevels[6]: // False
+                isLevelDetected = (mSensorValue == 0);
+                break;  
         }
+        if(isLevelDetected)
+            callback();
+        else
+            setTimeout(function() {
+                ext.waitSensor(sensorId, sensorLevel, callback);
+            }, 50);
     }
 
     // Ends Here.

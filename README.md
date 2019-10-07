@@ -18,13 +18,14 @@ This repo includes the ScartchX extension for working with the Algobrain, as wel
 ## *Installation*
 After following all the prerequisites and dependecies installations...
 - **Download \ Clone this repo.**
+To download it, press the clone or download button. Then, unzip the folder where you want it.
 - Open the **"ScratchX Device Plugin" folder** and install **"ScratchDevicePlugin"** (MSI for Windows, DMG for Mac)
 - Open the Arduino folder (Default location: **C:\Program Files (x86)\Arduino**)
-- Copy the **"Boards.h"** file to **"...\Arduino\libraries\Firmata"**
+- Copy the **"Boards.h"** file from this repository, to **"...\Arduino\libraries\Firmata"**
 - Install the **Adafruit_NeoPixel library** from the Arduino IDE : Tools ---> Manage Libraries... ---> Search for Neopixel
 ![Neopixel](https://i.imgur.com/F80jUsA.png)
 - Connect the Algobrain with the **Micro USB** to the computer.
-- Open **"StandardFirmata.ino"** (Arduino sketch) and upload it to the Algobrain ([Learn how to upload here](https://github.com/AlgobrixCoding/Algobrain-Board)).
+- Open **"StandardFirmata.ino"** from this repo (Arduino sketch) and upload it to the Algobrain ([Learn how to upload here](https://github.com/AlgobrixCoding/Algobrain-Board)).
 - Open the following link **WITH IE11 Browser** and wait for the Algobrain to connect : [ScratchX Site Algobrain Extension](https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js).
 
 ## *How do I know if the device is connected?*

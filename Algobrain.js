@@ -412,7 +412,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.2 - Setup Complete ");
+        console.log("Algobrain Version 2.3 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -984,7 +984,7 @@
             ['w', 'Set LED %m.ledSelect to color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
             ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColorForever', '1', 'Red'],
             ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
-            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixel', '1', 0, 0, 0, -1],
+            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixelForever', '1', 0, 0, 0],
             ['--'], // Sensors
             ['w', 'Wait for %n seconds', 'waitSeconds', '1'],
             ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],

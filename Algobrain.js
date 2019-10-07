@@ -745,7 +745,7 @@
     // Algobrain ext Functions (ScratchX Blocks) :
     
     // Motors
-    ext.setMotor = function (motorId, dir, pwm, seconds=-1, callback) {
+    ext.setMotor = function (motorId, dir, pwm, seconds, callback) {
         setMotor(motorId, dir, pwm);
         if (seconds < 0) { // Infinity \ Forever
             callback();
@@ -809,7 +809,7 @@
         }, deltaTime)
     };
     // LED's
-    ext.setNeopixelColor = function(ledSelect, color, seconds=-1, callback) {
+    ext.setNeopixelColor = function(ledSelect, color, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
         registerNeopixel(LedPin, 1);
         switch(color) {
@@ -833,7 +833,7 @@
         }
     };
 
-    ext.setNeopixel = function (ledSelect, red, green, blue, seconds=-1, callback) {
+    ext.setNeopixel = function (ledSelect, red, green, blue, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
         registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
@@ -953,12 +953,12 @@
             // Algobrain Blocks :
             ['--'], // Motors
             ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
-            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotor', 'A', 'Clockwise', 255],
+            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotor', 'A', 'Clockwise', 255, -1],
             ['w', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
             ['w', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             ['--'], // LED's
             ['w', 'Set LED %m.ledSelect to color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
-            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColor', '1', 'Red'],
+            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColor', '1', 'Red', -1],
             ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
             ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixel', '1', 0, 0, 0, -1],
             ['--'], // Sensors

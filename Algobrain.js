@@ -103,6 +103,7 @@
     // Pulse In Function
     var pulseInBuffer = [];
     var pulseInResult;
+    var sensorValue;
     var newPulseInResult = false;
 
     function HWList() {
@@ -414,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 3.0 - Setup Complete ");
+        console.log("Algobrain Version 2.0 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -921,42 +922,41 @@
         // Possible Levels :
         // 'Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False'
 
-        var sensorValue;
+        var mSensorValue;
         waitSensor(callback);
 
         function waitSensor(callback) {
             var isLevelDetected = false;
-            sensorValue = ext.getSensor(sensorId);
-            console.log(sensorValue);
+            ext.getSensor(sensorId);
+            mSensorValue = sensorValue;
+            console.log(mSensorValue);
             switch (sensorLevel) {
                 case menus[lang].sensorLevels[0]: // Low
-                    isLevelDetected = (1 <= sensorValue && sensorValue <= 2);
+                    isLevelDetected = (1 <= mSensorValue && mSensorValue <= 2);
                     break;
                 case menus[lang].sensorLevels[1]: // Medium
-                    isLevelDetected = (3 <= sensorValue && sensorValue <= 5);
+                    isLevelDetected = (3 <= mSensorValue && mSensorValue <= 5);
                     break;
                 case menus[lang].sensorLevels[2]: // High
-                    isLevelDetected = (6 <= sensorValue && sensorValue <= 10);
+                    isLevelDetected = (6 <= mSensorValue && mSensorValue <= 10);
                     break;
                 case menus[lang].sensorLevels[3]: // Low-Medium
-                    isLevelDetected = (1 <= sensorValue && sensorValue <= 5);
+                    isLevelDetected = (1 <= mSensorValue && mSensorValue <= 5);
                     break;
                 case menus[lang].sensorLevels[4]: // Medium-High
-                    isLevelDetected = (3 <= sensorValue && sensorValue <= 10);
+                    isLevelDetected = (3 <= mSensorValue && mSensorValue <= 10);
                     break;
                 case menus[lang].sensorLevels[5]: // True
-                    isLevelDetected = (sensorValue != 0);
+                    isLevelDetected = (mSensorValue != 0);
                     break;
                 case menus[lang].sensorLevels[6]: // False
-                    isLevelDetected = (sensorValue == 0);
+                    isLevelDetected = (mSensorValue == 0);
                     break;  
             }
-            if(isLevelDetected) {
+            if(isLevelDetected)
                 callback();
-                return;
-            } else {
+            else
                 setTimeout(waitSensor, 50);
-            }
         }
     }
 

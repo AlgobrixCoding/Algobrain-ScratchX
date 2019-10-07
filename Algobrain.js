@@ -933,7 +933,7 @@
                     break;  
             }
         }
-        callback(sensorValue);
+        callback();
     }
 
     // Ends Here.
@@ -964,7 +964,7 @@
             ['--'], // Sensors
             ['w', 'Wait for %n seconds', 'waitSeconds', '1'],
             ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],
-            ['R', 'Wait for sensor %m.sensorSelection to detect %m.sensorLevels', 'waitSensor', '1', 'Low']
+            ['w', 'Wait for sensor %m.sensorSelection to detect %m.sensorLevels', 'waitSensor', '1', 'Low']
             // Ends Here
         ]
         // Still working on hebrew

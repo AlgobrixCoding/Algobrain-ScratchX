@@ -415,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.0 - Setup Complete ");
+        console.log("Algobrain Version 2.5 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -903,7 +903,8 @@
                 dutyCycle = 100;
             console.log("dutyCycle Value: " + dutyCycle / 10);
             console.log("getSensor Value: " + Math.round(dutyCycle / 10));
-            return Math.round(dutyCycle / 10);
+            sensorValue = Math.round(dutyCycle / 10);
+            return sensorValue;
         }
     };
     

@@ -412,7 +412,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.1 - Setup Complete ");
+        console.log("Algobrain Version 2.2 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -758,8 +758,8 @@
     };
     
     ext.setMotorForever = function(motorId, dir, pwm, callback) {
-        ext.setMotor(motorId, dir, pwm, -1);
-        callback();
+        ext.setMotor(motorId, dir, pwm, -1, callback);
+        //callback();
     }
 
     ext.moveRobot = function (robotDir, numSteps, callback) {
@@ -813,6 +813,7 @@
             callback();
         }, deltaTime)
     };
+
     // LED's
     ext.setNeopixelColor = function(ledSelect, color, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
@@ -843,7 +844,7 @@
         callback();
     }
     
-    ext.setNeopixel = function (ledSelect, red, green, blue, seconds, callback) {
+    ext.setNeopixel = function(ledSelect, red, green, blue, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;
         registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
@@ -856,6 +857,12 @@
             }, seconds * 1000);
         }
     };
+
+    ext.setNeopixelForever = function(ledSelect, red, green, blue, callback) {
+        ext.setNeopixel(ledSelect, red, green, blue, -1, callback);
+        callback();
+    }
+
     // Wait \ Sensors
     ext.waitSeconds = function(seconds, callback) {
         setTimeout(function() {
@@ -948,7 +955,8 @@
             }
             if(isLevelDetected)
                 return;
-            setTimeout(waitSensor, 5);
+            else
+                setTimeout(waitSensor, 100);
         }
     }
 

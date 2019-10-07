@@ -10,7 +10,7 @@
  *GNU General Public License for more details.
  *
  *You should have received a copy of the GNU General Public License
- *along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function (ext) {
@@ -823,7 +823,7 @@
         }, deltaTime)
     };
 
-    ext.setMotor = function (motorId, dir, pwm) {
+    ext.setMotor = function (motorId, dir, pwm, callback) {
         setMotor(motorId, dir, pwm);
     };
 
@@ -876,7 +876,7 @@
     var blocks = {
         en: [
             // Algobrain Blocks :
-            [' ', 'Move Motor %m.motorSelection %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
+            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
             [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
             [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setNeopixelColor', '1', 'Red'],

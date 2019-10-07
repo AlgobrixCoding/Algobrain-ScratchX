@@ -743,7 +743,73 @@
     };
 
     // Algobrain ext Functions (ScratchX Blocks) :
-    ext.setNeopixelColor = function(ledSelect, color) {
+    
+    // Motors
+    ext.setMotor = function (motorId, dir, pwm, seconds, callback) {
+        setMotor(motorId, dir, pwm);
+        if (seconds < 0) { // Infinity \ Forever
+            callback();
+        } else {
+            setTimeout(function() {
+                setMotor(motorId, dir, 0);
+                callback();
+            }, seconds * 1000);
+        }
+    };
+
+    ext.moveRobot = function (robotDir, numSteps, callback) {
+        var moveRobotTime = 0;
+        if(robotDir == menus[lang].robotDirection[0]) {
+            // Forward
+            setMotor('A', 'Counter-Clockwise', 170);
+            setMotor('B', 'Clockwise', 170);
+        } else {
+            // Backwards
+            setMotor('A', 'Clockwise', 170);
+            setMotor('B', 'Counter-Clockwise', 170);
+        }
+        switch(numSteps) {
+            case 0:
+                moveRobotTime = 0;
+                break;
+            case 1:
+                moveRobotTime = 1400;
+                break;
+            case 2:
+                moveRobotTime = 2750;
+                break;
+            case 3:
+                moveRobotTime = 4100;
+                break;
+            default:
+                moveRobotTime = 1500 * numSteps;
+                break;
+        }
+        setTimeout(function() {
+            setMotor('A', 'Clockwise', 0);
+            setMotor('B', 'Clockwise', 0);
+            callback();
+        }, moveRobotTime);
+    };
+
+    ext.rotateRobot = function (robotRotate, degrees, callback) {
+        // CW - Right , CCW - Left
+        var rotateDir = (robotRotate == menus[lang].robotRotation[0]) ? 'Counter-Clockwise' : 'Clockwise';
+        
+        setMotor('A', rotateDir, 85);
+        setMotor('B', rotateDir, 85);
+        
+        // Calculate the time of the given degrees
+        // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
+        var deltaTime = (degrees % 360.0) * 2200 / 90;
+        setTimeout(function() {
+            setMotor('A', rotateDir, 0);
+            setMotor('B', rotateDir, 0);
+            callback();
+        }, deltaTime)
+    };
+    // LED's
+    ext.setNeopixelColor = function(ledSelect, color, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
         registerNeopixel(LedPin, 1);
         switch(color) {
@@ -757,80 +823,36 @@
                 setNeopixel(0, 0, 0, 255);
                 break;
         }
+        if(seconds < 0) {  // Infinity \ Forever
+            callback();
+        } else {
+            setTimeout(function() {
+                setNeopixel(0, 0, 0, 0);
+                callback();
+            }, seconds * 1000);
+        }
     };
 
-    ext.setNeopixel = function (ledSelect, red, green, blue) {
+    ext.setNeopixel = function (ledSelect, red, green, blue, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
         registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
-    };
-
-    ext.moveRobot = function (robotDir, numSteps) {
-        if(robotDir == menus[lang].robotDirection[0]) {
-            // Forward
-            setMotor('A', 'Counter-Clockwise', 170);
-            setMotor('B', 'Clockwise', 170);
+        if(seconds < 0) { // Infinity \ Forever
+            callback();
         } else {
-            // Backwards
-            setMotor('A', 'Clockwise', 170);
-            setMotor('B', 'Counter-Clockwise', 170);
-        }
-        switch(numSteps) {
-            case 0:
-                setMotor('A', 'Clockwise', 0);
-                setMotor('B', 'Clockwise', 0);
-                break;
-            case 1:
-                setTimeout(function() {
-                    setMotor('A', 'Clockwise', 0);
-                    setMotor('B', 'Clockwise', 0);
-                }, 1400)
-                break;
-            case 2:
-                    setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
-                    }, 2750)
-                    break;
-            case 3:
-                    setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
-                    }, 4100)
-                    break;
-            default:
-                    setTimeout(function() {
-                        setMotor('A', 'Clockwise', 0);
-                        setMotor('B', 'Clockwise', 0);
-                    }, 1500 * numSteps)
-                    break;
+            setTimeout(function() {
+                setNeopixel(0, 0, 0, 0);
+                callback();
+            }, seconds * 1000);
         }
     };
-
-    ext.rotateRobot = function (robotRotate, degrees) {
-        // CW - Right , CCW - Left
-        var rotateDir = (robotRotate == menus[lang].robotRotation[0]) ? 'Counter-Clockwise' : 'Clockwise';
-        
-        setMotor('A', rotateDir, 85);
-        setMotor('B', rotateDir, 85);
-        
-        // Calculate the time of the given degrees
-        // 90 degrees is 2.2 Milliseconds, we use this to calculate the right time for the given degrees of rotation
-        var deltaTime = (degrees % 360.0) * 2200 / 90;
-        setTimeout(function() {
-            setMotor('A', rotateDir, 0);
-            setMotor('B', rotateDir, 0);
-        }, deltaTime)
-    };
-
-    ext.setMotor = function (motorId, dir, pwm, seconds, callback) {
-        console.log('Waiting for ' + seconds + ' seconds');
+    // Wait \ Sensors
+    ext.waitSeconds = function(seconds, callback) {
         setTimeout(function() {
             callback();
         }, seconds * 1000);
-        setMotor(motorId, dir, pwm);
-    };
-
+    }
+    
     ext.getSensor = function (sensorId) {
         var mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
         var pulseTimeout = 4000; // 4000 us --> 4 ms (0FA0)
@@ -842,12 +864,14 @@
             isInternalTimeout = true;
         }, 100); // 100 ms timeout
 
-        pulseIn(mSensorId, HIGH, cycleTime, pulseTimeout);
+        pulseIn(mSensorId, HIGH, cycleTime, pulseTimeout); // Send a pulseIn request to the board
         
-        wait();
+        return wait();
+
+        // The wait function will wait for the board to return a response
         function wait() {
             if(isInternalTimeout || newPulseInResult) {
-                if(isInternalTimeout)
+                if(isInternalTimeout) // No answer after 100 milliseconds ? 
                     return 0;
                 return getSensor(pulseInResult);
             }
@@ -865,6 +889,53 @@
             return Math.round(dutyCycle / 10);
         }
     };
+    
+    ext.waitSensor = function(sensorId, sensorLevel, callback) {
+        /*
+        Documentation on the Distance Sensor:
+        Senses distance between 2 - 100 centimeters
+        The 100 cm is divided between 0-10 in the code
+        0-2 cm will match sensor output of 0 --> Sense below 2 cm --> False
+        2-20 .......................... of 1-2 --> Low / True
+        20-50 ......................... of 3-5 --> Med / True
+        50-100 ........................ of 5-10 --> High / True
+        100+ ...........................of 0 --> Sense above 100 cm --> False
+        */
+        
+        // Possible Levels :
+        // 'Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False'
+
+        var sensorValue;
+        var levelDetected = false;
+        while(!levelDetected) {
+            sensorValue = ext.getSensor(sensorId);
+            switch (sensorLevel) {
+                case menus[lang].sensorLevels[0]: // Low
+                    levelDetected = (1 <= sensorValue && sensorValue <= 2);
+                    break;
+                case menus[lang].sensorLevels[1]: // Medium
+                    levelDetected = (3 <= sensorValue && sensorValue <= 5);
+                    break;
+                case menus[lang].sensorLevels[2]: // High
+                    levelDetected = (6 <= sensorValue && sensorValue <= 10);
+                    break;
+                case menus[lang].sensorLevels[3]: // Low-Medium
+                    levelDetected = (1 <= sensorValue && sensorValue <= 5);
+                    break;
+                case menus[lang].sensorLevels[4]: // Medium-High
+                    levelDetected = (3 <= sensorValue && sensorValue <= 10);
+                    break;
+                case menus[lang].sensorLevels[5]: // True
+                    levelDetected = (sensorValue != 0);
+                    break;
+                case menus[lang].sensorLevels[6]: // False
+                    levelDetected = (sensorValue == 0);
+                    break;  
+            }
+        }
+        callback(sensorValue);
+    }
+
     // Ends Here.
 
     // Check for GET param 'lang'
@@ -880,12 +951,19 @@
     var blocks = {
         en: [
             // Algobrain Blocks :
+            ['--'], // Motors
             ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
-            [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
-            [' ', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
-            [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setNeopixelColor', '1', 'Red'],
-            [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setNeopixel', '1', 0, 0, 0],
-            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1']
+            ['w', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
+            ['w', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
+            ['--'], // LED's
+            ['w', 'Set LED %m.ledSelect to color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
+            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColor', '1', 'Red', -1],
+            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
+            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixel', '1', 0, 0, 0, -1],
+            ['--'], // Sensors
+            ['w', 'Wait for %n seconds', 'waitSeconds', '1'],
+            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],
+            ['R', 'Wait for sensor %m.sensorSelection to detect %m.sensorLevels', 'waitSensor', '1', 'Low']
             // Ends Here
         ]
         // Still working on hebrew
@@ -912,7 +990,8 @@
             robotDirection: ['Forward', 'Backward'],
             robotRotation: ['Left', 'Right'],
             // Get Sensor
-            sensorSelection: ['1', '2']
+            sensorSelection: ['1', '2'],
+            sensorLevels: ['Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False']
         }
         //
         // he: {

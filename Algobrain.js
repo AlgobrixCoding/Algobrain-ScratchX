@@ -397,7 +397,9 @@
 
     function setupLeds() {
         registerNeopixel(Led_A_Pin, 1);
+        setNeopixel(0, 0, 0, 0);
         registerNeopixel(Led_B_Pin, 1);
+        setNeopixel(0, 0, 0, 0);
     }
 
     function setupSensors() {
@@ -412,7 +414,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.3 - Setup Complete ");
+        console.log("Algobrain Version 2.5 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {

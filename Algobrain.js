@@ -823,7 +823,11 @@
         }, deltaTime)
     };
 
-    ext.setMotor = function (motorId, dir, pwm, callback) {
+    ext.setMotor = function (motorId, dir, pwm, seconds, callback) {
+        console.log('Waiting for ' + seconds + ' seconds');
+        setTimeout(function() {
+            callback();
+        }, seconds * 1000);
         setMotor(motorId, dir, pwm);
     };
 

@@ -412,7 +412,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.0 - Setup Complete ");
+        console.log("Algobrain Version 2.1 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -756,6 +756,11 @@
             }, seconds * 1000);
         }
     };
+    
+    ext.setMotorForever = function(motorId, dir, pwm, callback) {
+        ext.setMotor(motorId, dir, pwm, -1);
+        callback();
+    }
 
     ext.moveRobot = function (robotDir, numSteps, callback) {
         var moveRobotTime = 0;
@@ -832,9 +837,14 @@
             }, seconds * 1000);
         }
     };
-
+    
+    ext.setNeopixelColorForever = function(ledSelect, color, callback) {
+        ext.setNeopixelColor(ledSelect, color, -1, callback);
+        callback();
+    }
+    
     ext.setNeopixel = function (ledSelect, red, green, blue, seconds, callback) {
-        var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
+        var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;
         registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
         if(seconds < 0) { // Infinity \ Forever
@@ -906,34 +916,40 @@
         // 'Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False'
 
         var sensorValue;
-        var levelDetected = false;
-        while(!levelDetected) {
+        waitSensor();
+        callback();
+
+        function waitSensor() {
+            var isLevelDetected = false;
             sensorValue = ext.getSensor(sensorId);
+            console.log(sensorValue);
             switch (sensorLevel) {
                 case menus[lang].sensorLevels[0]: // Low
-                    levelDetected = (1 <= sensorValue && sensorValue <= 2);
+                    isLevelDetected = (1 <= sensorValue && sensorValue <= 2);
                     break;
                 case menus[lang].sensorLevels[1]: // Medium
-                    levelDetected = (3 <= sensorValue && sensorValue <= 5);
+                    isLevelDetected = (3 <= sensorValue && sensorValue <= 5);
                     break;
                 case menus[lang].sensorLevels[2]: // High
-                    levelDetected = (6 <= sensorValue && sensorValue <= 10);
+                    isLevelDetected = (6 <= sensorValue && sensorValue <= 10);
                     break;
                 case menus[lang].sensorLevels[3]: // Low-Medium
-                    levelDetected = (1 <= sensorValue && sensorValue <= 5);
+                    isLevelDetected = (1 <= sensorValue && sensorValue <= 5);
                     break;
                 case menus[lang].sensorLevels[4]: // Medium-High
-                    levelDetected = (3 <= sensorValue && sensorValue <= 10);
+                    isLevelDetected = (3 <= sensorValue && sensorValue <= 10);
                     break;
                 case menus[lang].sensorLevels[5]: // True
-                    levelDetected = (sensorValue != 0);
+                    isLevelDetected = (sensorValue != 0);
                     break;
                 case menus[lang].sensorLevels[6]: // False
-                    levelDetected = (sensorValue == 0);
+                    isLevelDetected = (sensorValue == 0);
                     break;  
             }
+            if(isLevelDetected)
+                return;
+            setTimeout(waitSensor, 5);
         }
-        callback();
     }
 
     // Ends Here.
@@ -953,12 +969,12 @@
             // Algobrain Blocks :
             ['--'], // Motors
             ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
-            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotor', 'A', 'Clockwise', 255, -1],
+            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotorForever', 'A', 'Clockwise', 255],
             ['w', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
             ['w', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             ['--'], // LED's
             ['w', 'Set LED %m.ledSelect to color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
-            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColor', '1', 'Red', -1],
+            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColorForever', '1', 'Red'],
             ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
             ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixel', '1', 0, 0, 0, -1],
             ['--'], // Sensors

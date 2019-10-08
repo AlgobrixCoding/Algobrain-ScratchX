@@ -998,7 +998,7 @@
             // Algobrain Blocks :
             // ['--'], // Motors
             ['w', 'מנוע %m.motorSelection %m.motorDirection כיוון שעון במהירות %n ל- %n שניות', 'setMotor', 'A', 'עם', 255, 1],
-            ['w', 'שניות %n -ל %n כיוון שעון במהירות %m.motorDirection %m.motorSelection מנוע', 'setMotorHE', 1, 255, 'עם', 'A']
+            ['w', 'שניות %n -ל %n במהירות שעון כיוון %m.motorDirection %m.motorSelection מנוע', 'setMotorHE', 1, 255, 'עם', 'A']
             // Ends Here
         ]
     };

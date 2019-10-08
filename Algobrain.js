@@ -415,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 3.0 - Setup Complete ");
+        console.log("Algobrain Version 2.0 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -760,6 +760,10 @@
         }
     };
     
+    ext.setMotorHE = function(seconds, pwm, dir, motorId, callback) {
+        ext.setMotor(motorId, dir, pwm, seconds, callback);
+    }
+    
     ext.setMotorForever = function(motorId, dir, pwm, callback) {
         ext.setMotor(motorId, dir, pwm, -1, callback);
     }
@@ -973,32 +977,30 @@
     var blocks = {
         en: [
             // Algobrain Blocks :
-            ['--'], // Motors
-            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
-            ['w', 'Move Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotorForever', 'A', 'Clockwise', 255],
-            ['w', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
-            ['w', 'Rotate Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
+            // ['--'], // Motors
+            ['w', 'Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
+            ['w', 'Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotorForever', 'A', 'Clockwise', 255],
+            ['w', 'Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
+            ['w', 'Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             ['--'], // LED's
-            ['w', 'Set LED %m.ledSelect to color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
-            ['w', 'Set LED %m.ledSelect to color %m.ledColor forever', 'setNeopixelColorForever', '1', 'Red'],
-            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
-            ['w', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue forever', 'setNeopixelForever', '1', 0, 0, 0],
+            ['w', 'LED %m.ledSelect color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
+            ['w', 'LED %m.ledSelect color %m.ledColor forever', 'setNeopixelColorForever', '1', 'Red'],
+            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
+            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue forever', 'setNeopixelForever', '1', 0, 0, 0],
             ['--'], // Sensors
-            ['w', 'Wait for %n seconds', 'waitSeconds', '1'],
-            ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],
-            ['w', 'Wait for sensor %m.sensorSelection to detect %m.sensorLevels', 'waitSensor', '1', 'Low']
+            ['w', 'Wait %n seconds', 'waitSeconds', '1'],
+            // ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],
+            ['w', 'Sensor %m.sensorSelection wait %m.sensorLevels', 'waitSensor', '1', 'Low']
+            // Ends Here
+        ],
+        //Still working on hebrew
+        he: [
+            // Algobrain Blocks :
+            // ['--'], // Motors
+            ['w', 'מנוע %m.motorSelection %m.motorDirection כיוון שעון במהירות %n ל- %n שניות', 'setMotor', 'A', 'עם', 255, 1],
+            ['w', 'שניות %n -ל %n כיוון שעון במהירות %m.motorDirection %m.motorSelection מנוע', 'setMotorHE', 1, 255, 'עם', 'A']
             // Ends Here
         ]
-        // Still working on hebrew
-        // he: [
-        //     // Algobrain Blocks :
-        //     [' ', 'Move Motor %m.motorSelect %m.motorDirection at %n power', 'setMotor', 'A', 'Clockwise', 0],
-        //     [' ', 'Move Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
-        //     [' ', 'Rotate Robot %m.robotRotate at %n degrees', 'rotateRobot', 'Left', 90],
-        //     [' ', 'Set LED %m.ledSelect to %m.ledColor', 'setLedNeoPixelColor', '1', 'Red'],
-        //     [' ', 'Set LED %m.ledSelect to %n Red, %n Green, and %n Blue', 'setLedNeoPixel', '1', 0, 0, 0]
-        //     // Ends Here
-        // ]
     };
 
     var menus = {
@@ -1015,19 +1017,18 @@
             // Get Sensor
             sensorSelection: ['1', '2'],
             sensorLevels: ['Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False']
+        },
+        he: {
+            // Move Motor
+            motorSelection: ['A', 'B', 'C'],
+            motorDirection: ['עם', 'נגד'],
+            // LED's
+            ledSelect: ['1', '2'],
+            ledColor: ['אדום', 'ירוק', 'כחול'],
+            // Move Robot
+            robotDirection: ['קדימה', 'אחורה'],
+            robotRotate: ['שמאלה', 'ימינה']
         }
-        //
-        // he: {
-        //     // Move Motor
-        //     motorSelect: ['A', 'B', 'C'],
-        //     motorDirection: ['נגד', 'עם'],
-        //     // LED's
-        //     ledSelect: ['1', '2'],
-        //     ledColor: ['אדום', 'ירוק', 'כחול'],
-        //     // Move Robot
-        //     robotDirection: ['קדימה', 'אחורה'],
-        //     robotRotate: ['שמאלה', 'ימינה']
-        // }
     };
 
     var descriptor = {

@@ -415,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 3.0 - Setup Complete ");
+        console.log("Algobrain Version 2.5 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -1029,14 +1029,12 @@
             ['w', 'צעדים %n %m.robotDirection רובוט', 'moveRobotHE', 1, 'קדימה'],
             ['w', 'מעלות %n -ב %m.robotRotation סובב', 'rotateRobotHE', 'שמאלה', 90],
             ['--'], // LED's
-            ['w', 'שניות %n במשך %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 1, 'Red', '1'],
-            ['w', 'לתמיד %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 'Red', '1'],
+            ['w', 'שניות %n במשך %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 1, 'אדום', '1'],
+            ['w', 'לתמיד %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 'אדום', '1'],
             ['w', 'שניות %n במשך כחול %n ירוק %n אדום %n בגוון %m.ledSelect מנורה', 'setNeopixelHE', 1, 255, 255, 255, '1'],
             ['w', 'לתמיד כחול %n ירוק %n אדום %n בגוון %m.ledSelect מנורה', 'setNeopixelForeverHE', 255, 255, 255, '1'],
             ['--'], // Sensors
             ['w', 'שניות %n למשך חכה', 'waitSeconds', 1],
-            ['w', 'Sensor %m.sensorSelection wait %m.sensorLevels', 'waitSensor', '1', 'Low'],
-            ['w', 'המתן לעוצמה גבוהה מחיישן איי']
             ['w', '%m.sensorSelection מחיישן %m.sensorLevels לערך המתן', 'waitSensor', '1', 'נמוכה']
             
             // Ends Here

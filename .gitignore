@@ -1,1 +1,5 @@
+# Ignore file named 'README.txt'
+README.txt
+
+# Ignore the FirmataHelpers Folder
 FirmataHelpers/

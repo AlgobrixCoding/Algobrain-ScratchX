@@ -415,7 +415,7 @@
         setupSensors();
         setupMotors();
         setupLeds();
-        console.log("Algobrain Version 2.0 - Setup Complete ");
+        console.log("Algobrain Version 3.0 - Setup Complete ");
     }
     
     function setMotor(motorId, dir, pwm) {
@@ -753,31 +753,35 @@
         if (seconds < 0) { // Infinity \ Forever
             callback();
         } else {
-            setTimeout(function() {
+            setTimeout(function () {
                 setMotor(motorId, dir, 0);
                 callback();
             }, seconds * 1000);
         }
     };
     
-    ext.setMotorHE = function(seconds, pwm, dir, motorId, callback) {
+    ext.setMotorHE = function (seconds, pwm, dir, motorId, callback) {
         ext.setMotor(motorId, dir, pwm, seconds, callback);
-    }
+    };
     
-    ext.setMotorForever = function(motorId, dir, pwm, callback) {
+    ext.setMotorForever = function (motorId, dir, pwm, callback) {
         ext.setMotor(motorId, dir, pwm, -1, callback);
-    }
+    };
 
-    ext.moveRobot = function (robotDir, numSteps, callback) {
+    ext.setMotorForeverHE = function (pwm, dir, motorId, callback) {
+        ext.setMotorForever(motorId, dir, pwm, callback);
+    };
+
+    ext.moveRobot = function(robotDir, numSteps, callback) {
         var moveRobotTime = 0;
         if(robotDir == menus[lang].robotDirection[0]) {
             // Forward
-            setMotor('A', 'Counter-Clockwise', 170);
-            setMotor('B', 'Clockwise', 170);
+            setMotor('A', menus[lang].robotDirection[1], 170);
+            setMotor('B', menus[lang].robotDirection[0], 170);
         } else {
             // Backwards
-            setMotor('A', 'Clockwise', 170);
-            setMotor('B', 'Counter-Clockwise', 170);
+            setMotor('A', menus[lang].robotDirection[0], 170);
+            setMotor('B', menus[lang].robotDirection[1], 170);
         }
         switch(numSteps) {
             case 0:
@@ -797,15 +801,19 @@
                 break;
         }
         setTimeout(function() {
-            setMotor('A', 'Clockwise', 0);
-            setMotor('B', 'Clockwise', 0);
+            setMotor('A', menus[lang].robotDirection[0], 0);
+            setMotor('B', menus[lang].robotDirection[0], 0);
             callback();
         }, moveRobotTime);
+    };
+    
+    ext.moveRobotHE = function(numSteps, robotDir, callback) {
+        ext.moveRobot(robotDir, numSteps, callback);
     };
 
     ext.rotateRobot = function (robotRotate, degrees, callback) {
         // CW - Right , CCW - Left
-        var rotateDir = (robotRotate == menus[lang].robotRotation[0]) ? 'Counter-Clockwise' : 'Clockwise';
+        var rotateDir = (robotRotate == menus[lang].robotRotation[0]) ? menus[lang].robotRotation[1] : menus[lang].robotRotation[0];
         
         setMotor('A', rotateDir, 85);
         setMotor('B', rotateDir, 85);
@@ -820,8 +828,12 @@
         }, deltaTime)
     };
 
+    ext.rotateRobotHE = function (degrees, robotRotate, callback) {
+        ext.rotateRobot(robotRotate, degrees, callback);
+    };
+
     // LED's
-    ext.setNeopixelColor = function(ledSelect, color, seconds, callback) {
+    ext.setNeopixelColor = function (ledSelect, color, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;    
         registerNeopixel(LedPin, 1);
         switch(color) {
@@ -838,33 +850,49 @@
         if(seconds < 0) {  // Infinity \ Forever
             callback();
         } else {
-            setTimeout(function() {
+            setTimeout(function () {
                 setNeopixel(0, 0, 0, 0);
                 callback();
             }, seconds * 1000);
         }
     };
     
-    ext.setNeopixelColorForever = function(ledSelect, color, callback) {
-        ext.setNeopixelColor(ledSelect, color, -1, callback);
-    }
+    ext.setNeopixelColorHE = function (seconds, color, ledSelect, callback) {
+      ext.setNeopixelColor(ledSelect, color, seconds, callback);
+    };
     
-    ext.setNeopixel = function(ledSelect, red, green, blue, seconds, callback) {
+    ext.setNeopixelColorForever = function (ledSelect, color, callback) {
+        ext.setNeopixelColor(ledSelect, color, -1, callback);
+    };
+    
+    ext.setNeopixelColorForeverHE = function (color, ledSelect, callback) {
+        ext.setNeopixelColorForever(ledSelect, color, callback);
+    };
+    
+    ext.setNeopixel = function (ledSelect, red, green, blue, seconds, callback) {
         var LedPin = (ledSelect == '1') ? Led_A_Pin : Led_B_Pin;
         registerNeopixel(LedPin, 1);
         setNeopixel(0, red, green, blue);
         if(seconds < 0) { // Infinity \ Forever
             callback();
         } else {
-            setTimeout(function() {
+            setTimeout(function () {
                 setNeopixel(0, 0, 0, 0);
                 callback();
             }, seconds * 1000);
         }
     };
 
-    ext.setNeopixelForever = function(ledSelect, red, green, blue, callback) {
+    ext.setNeopixelHE = function (seconds, blue, green, red, ledSelect, callback) {
+        ext.setNeopixel(ledSelect, red, green, blue, seconds, callback);
+    };
+
+    ext.setNeopixelForever = function (ledSelect, red, green, blue, callback) {
         ext.setNeopixel(ledSelect, red, green, blue, -1, callback);
+    };
+
+    ext.setNeopixelForeverHE = function (blue, green, red, ledSelect, callback) {
+        ext.setNeopixelForever(ledSelect, red, green, blue, callback);
     }
 
     // Wait \ Sensors
@@ -872,7 +900,7 @@
         setTimeout(function() {
             callback();
         }, seconds * 1000);
-    }
+    };
     
     ext.getSensor = function (sensorId) {
         var mSensorId = (sensorId == menus[lang].sensorSelection[0]) ? Sensor_A_Pin : Sensor_B_Pin;
@@ -960,7 +988,7 @@
             setTimeout(function() {
                 ext.waitSensor(sensorId, sensorLevel, callback);
             }, 50);
-    }
+    };
 
     // Ends Here.
 
@@ -981,24 +1009,36 @@
             ['w', 'Motor %m.motorSelection %m.motorDirection at %n power for %n seconds', 'setMotor', 'A', 'Clockwise', 255, 1],
             ['w', 'Motor %m.motorSelection %m.motorDirection at %n power forever', 'setMotorForever', 'A', 'Clockwise', 255],
             ['w', 'Robot %m.robotDirection for %n steps', 'moveRobot', 'Forward', 1],
-            ['w', 'Robot %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
+            ['w', 'Rotate %m.robotRotation at %n degrees', 'rotateRobot', 'Left', 90],
             ['--'], // LED's
             ['w', 'LED %m.ledSelect color %m.ledColor for %n seconds', 'setNeopixelColor', '1', 'Red', 1],
             ['w', 'LED %m.ledSelect color %m.ledColor forever', 'setNeopixelColorForever', '1', 'Red'],
-            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 0, 0, 0, 1],
-            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue forever', 'setNeopixelForever', '1', 0, 0, 0],
+            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue for %n seconds', 'setNeopixel', '1', 255, 255, 255, 1],
+            ['w', 'LED %m.ledSelect %n Red, %n Green, and %n Blue forever', 'setNeopixelForever', '1', 255, 255, 255],
             ['--'], // Sensors
-            ['w', 'Wait %n seconds', 'waitSeconds', '1'],
+            ['w', 'Wait %n seconds', 'waitSeconds', 1],
             // ['r', 'Get value from sensor %m.sensorSelection', 'getSensor', '1'],
             ['w', 'Sensor %m.sensorSelection wait %m.sensorLevels', 'waitSensor', '1', 'Low']
             // Ends Here
         ],
-        //Still working on hebrew
         he: [
             // Algobrain Blocks :
             // ['--'], // Motors
-            ['w', 'מנוע %m.motorSelection %m.motorDirection כיוון שעון במהירות %n ל- %n שניות', 'setMotor', 'A', 'עם', 255, 1],
-            ['w', 'שניות %n -ל %n במהירות שעון כיוון %m.motorDirection %m.motorSelection מנוע', 'setMotorHE', 1, 255, 'עם', 'A']
+            ['w', 'שניות %n במשך %n במהירות שעון כיוון %m.motorDirection %m.motorSelection מנוע', 'setMotorHE', 1, 255, 'עם', 'A'],
+            ['w', 'לתמיד %n במהירות שעון כיוון %m.motorDirection %m.motorSelection מנוע', 'setMotorForeverHE', 255, 'עם', 'A'],
+            ['w', 'צעדים %n %m.robotDirection רובוט', 'moveRobotHE', 1, 'קדימה'],
+            ['w', 'מעלות %n -ב %m.robotRotation סובב', 'rotateRobotHE', 'שמאלה', 90],
+            ['--'], // LED's
+            ['w', 'שניות %n במשך %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 1, 'Red', '1'],
+            ['w', 'לתמיד %m.ledColor בצבע %m.ledSelect מנורה', 'setNeopixelColorHE', 'Red', '1'],
+            ['w', 'שניות %n במשך כחול %n ירוק %n אדום %n בגוון %m.ledSelect מנורה', 'setNeopixelHE', 1, 255, 255, 255, '1'],
+            ['w', 'לתמיד כחול %n ירוק %n אדום %n בגוון %m.ledSelect מנורה', 'setNeopixelForeverHE', 255, 255, 255, '1'],
+            ['--'], // Sensors
+            ['w', 'שניות %n למשך חכה', 'waitSeconds', 1],
+            ['w', 'Sensor %m.sensorSelection wait %m.sensorLevels', 'waitSensor', '1', 'Low'],
+            ['w', 'המתן לעוצמה גבוהה מחיישן איי']
+            ['w', '%m.sensorSelection מחיישן %m.sensorLevels לערך המתן', 'waitSensor', '1', 'נמוכה']
+            
             // Ends Here
         ]
     };
@@ -1008,12 +1048,12 @@
             // Move Motor
             motorSelection: ['A', 'B', 'C'],
             motorDirection: ['Clockwise', 'Counter-Clockwise'],
-            // LED's
-            ledSelect: ['1', '2'],
-            ledColor: ['Red', 'Green', 'Blue'],
             // Move Robot
             robotDirection: ['Forward', 'Backward'],
             robotRotation: ['Left', 'Right'],
+            // LED's
+            ledSelect: ['1', '2'],
+            ledColor: ['Red', 'Green', 'Blue'],
             // Get Sensor
             sensorSelection: ['1', '2'],
             sensorLevels: ['Low', 'Medium', 'High', 'Low-Medium', 'Medium-High', 'True', 'False']
@@ -1022,12 +1062,15 @@
             // Move Motor
             motorSelection: ['A', 'B', 'C'],
             motorDirection: ['עם', 'נגד'],
+            // Move Robot
+            robotDirection: ['קדימה', 'אחורה'],
+            robotRotation: ['שמאלה', 'ימינה'],
             // LED's
             ledSelect: ['1', '2'],
             ledColor: ['אדום', 'ירוק', 'כחול'],
-            // Move Robot
-            robotDirection: ['קדימה', 'אחורה'],
-            robotRotate: ['שמאלה', 'ימינה']
+            // Get Sensor
+            sensorSelection: ['1', '2'],
+            sensorLevels: ['נמוכה', 'בינונית', 'גבוהה', 'נמוכה-בינונית', 'בינונית-גבוהה', 'אמת', 'שקר']
         }
     };
 
@@ -1038,7 +1081,6 @@
         displyName: 'Algobrain ScratchX'
         // https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - Extension URL (ScratchX)
         // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js - English (Default)
-        // Hebrew still in production
         // https://scratchx.org/?url=https://algobrixcoding.github.io/Algobrain-ScratchX/Algobrain.js&lang=he - Hebrew
     };
 

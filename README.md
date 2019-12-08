@@ -6,7 +6,7 @@
 - [Installation](https://github.com/AlgobrixCoding/Algobrain-ScratchX#installation)
 
 ## *Introduction*
-This repo includes the ScartchX extension for working with the Algobrain, as well as the files and arduino sketch required for the board.
+This repo includes the ScratchX extension for working with the Algobrain, as well as the files and arduino sketch required for the board.
 
 ## *Prerequisites \ Dependencies*
 - [First, if needed purchase Algobrix's Algobrain Board here](http://www.algobrix.com/)
